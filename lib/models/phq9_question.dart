@@ -8,19 +8,25 @@ class Phq9Question {
   final String id;
   final String textRu;
   final String textKk;
+  final String textEn;
   final int order;
   
   Phq9Question({
     required this.id,
     required this.textRu,
     required this.textKk,
+    required this.textEn,
     required this.order,
   });
   
   String getText(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final langCode = l10n.locale.languageCode;
-    return langCode == 'kk' ? textKk : textRu;
+    switch (langCode) {
+      case 'kk': return textKk;
+      case 'en': return textEn;
+      default: return textRu;
+    }
   }
   
   factory Phq9Question.fromMap(Map<String, dynamic> map, String id) {
@@ -28,6 +34,7 @@ class Phq9Question {
       id: id,
       textRu: map['textRu'] ?? map['text'] ?? '',
       textKk: map['textKk'] ?? map['text'] ?? '',
+      textEn: map['textEn'] ?? map['text'] ?? '',
       order: map['order'] ?? 0,
     );
   }
@@ -36,6 +43,7 @@ class Phq9Question {
     return {
       'textRu': textRu,
       'textKk': textKk,
+      'textEn': textEn,
       'order': order,
     };
   }
@@ -74,54 +82,63 @@ class Phq9Questions {
       id: 'phq9_1',
       textRu: 'За последние 2 недели, как часто тебя беспокоило плохое настроение, подавленность или безнадежность?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі нашар көңіл-күй, басып кету немесе үмітсіздік алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by feeling down, depressed, or hopeless?',
       order: 1,
     ),
     Phq9Question(
       id: 'phq9_2',
       textRu: 'За последние 2 недели, как часто тебя беспокоило отсутствие интереса или удовольствия от того, чем ты обычно занимаешься?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі әдеттегі іс-әрекеттеріңізге қызығушылық немесе қуаныш жоқтығы алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by little interest or pleasure in doing things?',
       order: 2,
     ),
     Phq9Question(
       id: 'phq9_3',
       textRu: 'За последние 2 недели, как часто у тебя были проблемы с засыпанием или сном (слишком долгий сон или беспокойный сон)?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі ұйықтауда немесе ұйқыда (тым ұзақ ұйықтау немесе тынышсыз ұйқы) мәселелер алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you had trouble falling or staying asleep, or sleeping too much?',
       order: 3,
     ),
     Phq9Question(
       id: 'phq9_4',
       textRu: 'За последние 2 недели, как часто ты чувствовал(а) усталость или нехватку энергии?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі шаршау немесе энергия жетіспеушілігі сезімі алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you felt tired or had little energy?',
       order: 4,
     ),
     Phq9Question(
       id: 'phq9_5',
       textRu: 'За последние 2 недели, как часто у тебя был плохой аппетит или ты переедал(а)?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі нашар тамақтану немесе асыра тамақтану алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you had poor appetite or overeating?',
       order: 5,
     ),
     Phq9Question(
       id: 'phq9_6',
       textRu: 'За последние 2 недели, как часто ты чувствовал(а) себя плохо из-за того, что ты плохой человек, или что ты подвел(а) себя или свою семью?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі өзіңізді нашар адам деп сезіну немесе өзіңізді немесе отбасыңызды алдағаныңыз сезімі алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you felt bad about yourself — or that you are a failure or have let yourself or your family down?',
       order: 6,
     ),
     Phq9Question(
       id: 'phq9_7',
       textRu: 'За последние 2 недели, как часто у тебя были проблемы с концентрацией внимания (например, при чтении или просмотре телевизора)?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі назар аудару мәселелері (мысалы, оқу немесе теледидар көру кезінде) алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you had trouble concentrating on things, such as reading or watching TV?',
       order: 7,
     ),
     Phq9Question(
       id: 'phq9_8',
       textRu: 'За последние 2 недели, двигался ли ты или говорил так медленно, что другие могли это заметить? Или наоборот — был настолько беспокойным или суетливым, что двигался намного больше обычного?',
       textKk: 'Соңғы 2 аптада, сіз басқалар байқауы мүмкін дегендей баяу қозғалдыңыз немесе сөйледіңіз бе? Немесе керісінше — сіз әдеттегіден әлдеқайда көп қозғалатын қиналған немесе алаңдаушы болдыңыз ба?',
+      textEn: 'Over the last 2 weeks, have you been moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual?',
       order: 8,
     ),
     Phq9Question(
       id: 'phq9_9',
       textRu: 'За последние 2 недели, возникали ли у тебя мысли о том, что лучше было бы умереть, или о причинении себе вреда?',
       textKk: 'Соңғы 2 аптада, сізде өлу немесе өзіңізге зиян келтіру туралы ойлар пайда болды ма?',
+      textEn: 'Over the last 2 weeks, have you had thoughts that you would be better off dead, or of hurting yourself?',
       order: 9,
     ),
   ];
@@ -203,25 +220,35 @@ enum Phq9Severity {
     final langCode = l10n.locale.languageCode;
     switch (this) {
       case Phq9Severity.minimal:
-        return langCode == 'kk' 
-          ? 'Депрессия белгілері жоқ немесе минималды.'
-          : 'Симптомы депрессии отсутствуют или минимальны.';
+        switch (langCode) {
+          case 'kk': return 'Депрессия белгілері жоқ немесе минималды.';
+          case 'en': return 'Depression symptoms are absent or minimal.';
+          default: return 'Симптомы депрессии отсутствуют или минимальны.';
+        }
       case Phq9Severity.mild:
-        return langCode == 'kk'
-          ? 'Жеңіл депрессия белгілері. Бақылау және қолдау ұсынылады.'
-          : 'Легкие симптомы депрессии. Рекомендуется наблюдение и поддержка.';
+        switch (langCode) {
+          case 'kk': return 'Жеңіл депрессия белгілері. Бақылау және қолдау ұсынылады.';
+          case 'en': return 'Mild depression symptoms. Monitoring and support recommended.';
+          default: return 'Легкие симптомы депрессии. Рекомендуется наблюдение и поддержка.';
+        }
       case Phq9Severity.moderate:
-        return langCode == 'kk'
-          ? 'Орташа депрессия белгілері. Мамандық кеңесі ұсынылады.'
-          : 'Умеренные симптомы депрессии. Рекомендуется консультация специалиста.';
+        switch (langCode) {
+          case 'kk': return 'Орташа депрессия белгілері. Мамандық кеңесі ұсынылады.';
+          case 'en': return 'Moderate depression symptoms. Professional consultation recommended.';
+          default: return 'Умеренные симптомы депрессии. Рекомендуется консультация специалиста.';
+        }
       case Phq9Severity.moderatelySevere:
-        return langCode == 'kk'
-          ? 'Орташа-ауыр депрессия белгілері. Мамандық кеңесі қажет.'
-          : 'Умеренно-тяжелые симптомы депрессии. Необходима консультация специалиста.';
+        switch (langCode) {
+          case 'kk': return 'Орташа-ауыр депрессия белгілері. Мамандық кеңесі қажет.';
+          case 'en': return 'Moderately severe depression symptoms. Professional consultation needed.';
+          default: return 'Умеренно-тяжелые симптомы депрессии. Необходима консультация специалиста.';
+        }
       case Phq9Severity.severe:
-        return langCode == 'kk'
-          ? 'Ауыр депрессия белгілері. Дереу мамандық кеңесі қажет.'
-          : 'Тяжелые симптомы депрессии. Требуется немедленная консультация специалиста.';
+        switch (langCode) {
+          case 'kk': return 'Ауыр депрессия белгілері. Дереу мамандық кеңесі қажет.';
+          case 'en': return 'Severe depression symptoms. Immediate professional consultation required.';
+          default: return 'Тяжелые симптомы депрессии. Требуется немедленная консультация специалиста.';
+        }
     }
   }
   

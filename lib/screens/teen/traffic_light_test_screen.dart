@@ -139,13 +139,13 @@ class _TrafficLightTestScreenState extends State<TrafficLightTestScreen> {
         appBar: AppBar(
           title: Text(l10n.get('trafficLightTitle')),
         ),
-        body: const Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Генерируем вопросы для тебя...'),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(l10n.get('generatingQuestions')),
             ],
           ),
         ),
@@ -163,11 +163,11 @@ class _TrafficLightTestScreenState extends State<TrafficLightTestScreen> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              const Text('Не удалось загрузить вопросы'),
+              Text(l10n.get('failedToLoadQuestions')),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _loadQuestions,
-                child: const Text('Попробовать снова'),
+                child: Text(l10n.get('tryAgain')),
               ),
             ],
           ),

@@ -8,19 +8,25 @@ class Gad7Question {
   final String id;
   final String textRu;
   final String textKk;
+  final String textEn;
   final int order;
   
   Gad7Question({
     required this.id,
     required this.textRu,
     required this.textKk,
+    required this.textEn,
     required this.order,
   });
   
   String getText(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final langCode = l10n.locale.languageCode;
-    return langCode == 'kk' ? textKk : textRu;
+    switch (langCode) {
+      case 'kk': return textKk;
+      case 'en': return textEn;
+      default: return textRu;
+    }
   }
   
   factory Gad7Question.fromMap(Map<String, dynamic> map, String id) {
@@ -28,6 +34,7 @@ class Gad7Question {
       id: id,
       textRu: map['textRu'] ?? map['text'] ?? '',
       textKk: map['textKk'] ?? map['text'] ?? '',
+      textEn: map['textEn'] ?? map['text'] ?? '',
       order: map['order'] ?? 0,
     );
   }
@@ -36,6 +43,7 @@ class Gad7Question {
     return {
       'textRu': textRu,
       'textKk': textKk,
+      'textEn': textEn,
       'order': order,
     };
   }
@@ -74,42 +82,49 @@ class Gad7Questions {
       id: 'gad7_1',
       textRu: 'За последние 2 недели, как часто тебя беспокоило чувство нервозности, тревоги или напряжения?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі нервоздық, мазасыздық немесе кернеу сезімі алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by feeling nervous, anxious, or on edge?',
       order: 1,
     ),
     Gad7Question(
       id: 'gad7_2',
       textRu: 'За последние 2 недели, как часто тебя беспокоило то, что ты не мог(ла) остановить или контролировать беспокойство?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі мазасыздықты тоқтата алмау немесе басқара алмау алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by not being able to stop or control worrying?',
       order: 2,
     ),
     Gad7Question(
       id: 'gad7_3',
       textRu: 'За последние 2 недели, как часто тебя беспокоило чрезмерное беспокойство о разных вещах?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі әртүрлі нәрселер туралы асыра мазасыздану алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by worrying too much about different things?',
       order: 3,
     ),
     Gad7Question(
       id: 'gad7_4',
       textRu: 'За последние 2 недели, как часто тебе было трудно расслабиться?',
       textKk: 'Соңғы 2 аптада, сізге қаншалықты жиі тыныштандыру қиын болды?',
+      textEn: 'Over the last 2 weeks, how often have you had trouble relaxing?',
       order: 4,
     ),
     Gad7Question(
       id: 'gad7_5',
       textRu: 'За последние 2 недели, как часто ты был(а) настолько беспокойным(ой), что тебе было трудно усидеть на месте?',
       textKk: 'Соңғы 2 аптада, сіз қаншалықты жиі отыра алмайтын дегендей мазасыз болдыңыз ба?',
+      textEn: 'Over the last 2 weeks, how often have you been so restless that it is hard to sit still?',
       order: 5,
     ),
     Gad7Question(
       id: 'gad7_6',
       textRu: 'За последние 2 недели, как часто тебя беспокоила раздражительность или легкость возникновения злости?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі ашуланшақтық немесе ашу тез пайда болуы алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by becoming easily annoyed or irritable?',
       order: 6,
     ),
     Gad7Question(
       id: 'gad7_7',
       textRu: 'За последние 2 недели, как часто тебя беспокоило чувство страха, как будто должно произойти что-то ужасное?',
       textKk: 'Соңғы 2 аптада, сізді қаншалықты жиі қорқыныш сезімі, сізге қорқынышты нәрсе болатын сияқты, алаңдатады?',
+      textEn: 'Over the last 2 weeks, how often have you been bothered by feeling afraid, as if something awful might happen?',
       order: 7,
     ),
   ];
@@ -187,21 +202,29 @@ enum Gad7Severity {
     final langCode = l10n.locale.languageCode;
     switch (this) {
       case Gad7Severity.minimal:
-        return langCode == 'kk'
-          ? 'Тревожность белгілері жоқ немесе минималды.'
-          : 'Симптомы тревожности отсутствуют или минимальны.';
+        switch (langCode) {
+          case 'kk': return 'Тревожность белгілері жоқ немесе минималды.';
+          case 'en': return 'Anxiety symptoms are absent or minimal.';
+          default: return 'Симптомы тревожности отсутствуют или минимальны.';
+        }
       case Gad7Severity.mild:
-        return langCode == 'kk'
-          ? 'Жеңіл тревожность белгілері. Бақылау және тыныштандыру әдістері ұсынылады.'
-          : 'Легкие симптомы тревожности. Рекомендуется наблюдение и техники релаксации.';
+        switch (langCode) {
+          case 'kk': return 'Жеңіл тревожность белгілері. Бақылау және тыныштандыру әдістері ұсынылады.';
+          case 'en': return 'Mild anxiety symptoms. Monitoring and relaxation techniques recommended.';
+          default: return 'Легкие симптомы тревожности. Рекомендуется наблюдение и техники релаксации.';
+        }
       case Gad7Severity.moderate:
-        return langCode == 'kk'
-          ? 'Орташа тревожность белгілері. Мамандық кеңесі ұсынылады.'
-          : 'Умеренные симптомы тревожности. Рекомендуется консультация специалиста.';
+        switch (langCode) {
+          case 'kk': return 'Орташа тревожность белгілері. Мамандық кеңесі ұсынылады.';
+          case 'en': return 'Moderate anxiety symptoms. Professional consultation recommended.';
+          default: return 'Умеренные симптомы тревожности. Рекомендуется консультация специалиста.';
+        }
       case Gad7Severity.severe:
-        return langCode == 'kk'
-          ? 'Ауыр тревожность белгілері. Дереу мамандық кеңесі қажет.'
-          : 'Тяжелые симптомы тревожности. Требуется немедленная консультация специалиста.';
+        switch (langCode) {
+          case 'kk': return 'Ауыр тревожность белгілері. Дереу мамандық кеңесі қажет.';
+          case 'en': return 'Severe anxiety symptoms. Immediate professional consultation required.';
+          default: return 'Тяжелые симптомы тревожности. Требуется немедленная консультация специалиста.';
+        }
     }
   }
   

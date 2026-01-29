@@ -8,6 +8,7 @@ class TrafficLightQuestion {
   final String id;
   final String textRu;
   final String textKk;
+  final String textEn;
   final int order;
   final TrafficLightBlock block; // Блок вопроса (A, B, или C)
 
@@ -15,6 +16,7 @@ class TrafficLightQuestion {
     required this.id,
     required this.textRu,
     required this.textKk,
+    required this.textEn,
     required this.order,
     required this.block,
   });
@@ -22,7 +24,11 @@ class TrafficLightQuestion {
   String getText(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final langCode = l10n.locale.languageCode;
-    return langCode == 'kk' ? textKk : textRu;
+    switch (langCode) {
+      case 'kk': return textKk;
+      case 'en': return textEn;
+      default: return textRu;
+    }
   }
 
   factory TrafficLightQuestion.fromMap(Map<String, dynamic> map, String id) {
@@ -30,6 +36,7 @@ class TrafficLightQuestion {
       id: id,
       textRu: map['textRu'] ?? map['text'] ?? '',
       textKk: map['textKk'] ?? map['text'] ?? '',
+      textEn: map['textEn'] ?? map['text'] ?? '',
       order: map['order'] ?? 0,
       block: TrafficLightBlock.values.firstWhere(
         (e) => e.name == map['block'],
@@ -42,6 +49,7 @@ class TrafficLightQuestion {
     return {
       'textRu': textRu,
       'textKk': textKk,
+      'textEn': textEn,
       'order': order,
       'block': block.name,
     };
@@ -89,6 +97,7 @@ class TrafficLightQuestions {
       id: 'tl_a1',
       textRu: 'Твои батарейки: Как часто за последнюю неделю ты чувствовал, что у тебя совсем нет сил, даже если ты не перетруждался?',
       textKk: 'Сенің батареяларың: Соңғы аптада қаншалықты жиі сіз күш жетіспеушілігін сездіңіз, тіпті егер сіз асыра жұмыс істемеген болсаңыз?',
+      textEn: 'Your batteries: How often in the past week did you feel like you had no energy at all, even if you weren\'t overworking?',
       order: 1,
       block: TrafficLightBlock.energy,
     ),
@@ -96,6 +105,7 @@ class TrafficLightQuestions {
       id: 'tl_a2',
       textRu: 'Интерес к «движу»: Было ли такое, что вещи, которые ты раньше обожал (игры, хобби, прогулки), вдруг стали казаться скучными или бессмысленными?',
       textKk: '«Қозғалысқа» қызығушылық: Бұрын сүйген нәрселеріңіз (ойындар, хобби, серуендер) кенеттен жалықтыратын немесе мағынасыз болып көрінді ме?',
+      textEn: 'Interest in activities: Did things you used to love (games, hobbies, walks) suddenly seem boring or meaningless?',
       order: 2,
       block: TrafficLightBlock.energy,
     ),
@@ -103,6 +113,7 @@ class TrafficLightQuestions {
       id: 'tl_a3',
       textRu: 'Ощущение «невидимки»: Как часто тебе кажется, что тебя никто по-настоящему не понимает, даже если ты в компании?',
       textKk: '«Көрінбейтін» сезімі: Қаншалықты жиі сізге өзіңізді ешкім шынайы түсінбейді деп көрінеді, тіпті егер сіз компанияда болсаңыз?',
+      textEn: 'Feeling "invisible": How often do you feel like no one really understands you, even when you\'re with others?',
       order: 3,
       block: TrafficLightBlock.energy,
     ),
@@ -112,6 +123,7 @@ class TrafficLightQuestions {
       id: 'tl_b1',
       textRu: 'Режим «Overthinking»: Часто ли ты ловишь себя на том, что мозг по кругу крутит плохие мысли, которые ты не можешь остановить?',
       textKk: '«Overthinking» режимі: Қаншалықты жиі сіз миыңыздың нашар ойларды тоқтата алмайтындығын байқайсыз?',
+      textEn: 'Overthinking mode: Do you often catch yourself with your mind spinning negative thoughts in circles that you can\'t stop?',
       order: 4,
       block: TrafficLightBlock.anxiety,
     ),
@@ -119,6 +131,7 @@ class TrafficLightQuestions {
       id: 'tl_b2',
       textRu: 'Ожидание подвоха: Чувствуешь ли ты внезапную тревогу, будто вот-вот случится что-то плохое, хотя причин для этого нет?',
       textKk: 'Айла-шарғы күту: Сіз кенеттен мазасыздық сезінесіз бе, сізге нашар нәрсе болатын сияқты, дегенмен бұл үшін себептер жоқ?',
+      textEn: 'Expecting trouble: Do you feel sudden anxiety, as if something bad is about to happen, even though there\'s no reason for it?',
       order: 5,
       block: TrafficLightBlock.anxiety,
     ),
@@ -128,6 +141,7 @@ class TrafficLightQuestions {
       id: 'tl_c1',
       textRu: 'Взгляд в «завтра»: Что ты чувствуешь, когда думаешь о своем будущем (школа, экзамены, жизнь)?',
       textKk: '«Ертеңге» қарау: Сіз өзіңіздің болашағыңыз туралы ойланғанда (мектеп, емтихандар, өмір) не сезінесіз?',
+      textEn: 'Looking at tomorrow: How do you feel when you think about your future (school, exams, life)?',
       order: 6,
       block: TrafficLightBlock.social,
     ),
@@ -135,6 +149,7 @@ class TrafficLightQuestions {
       id: 'tl_c2',
       textRu: 'Давление извне: Кажется ли тебе, что от тебя все постоянно чего-то требуют, и ты не справляешься с этим давлением?',
       textKk: 'Сырттан қысым: Сізге барлығы сізден үнемі бір нәрсені талап етіп, сіз бұл қысымға төзбейтініңіз көрінеді ме?',
+      textEn: 'Outside pressure: Do you feel like everyone is constantly demanding something from you, and you can\'t handle the pressure?',
       order: 7,
       block: TrafficLightBlock.social,
     ),

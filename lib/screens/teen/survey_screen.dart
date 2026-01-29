@@ -5,6 +5,7 @@ import '../../services/survey_service.dart';
 import '../../models/question.dart';
 import '../../models/survey_response.dart';
 import '../../models/user_model.dart';
+import '../../l10n/app_localizations.dart';
 import 'genius_card_screen.dart';
 
 class SurveyScreen extends StatefulWidget {
@@ -79,6 +80,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   Future<void> _submitAnswer() async {
     if (_userId == null) return;
     
+    final l10n = AppLocalizations.of(context);
     final question = _questions[_currentIndex];
     String answer;
     
@@ -86,14 +88,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
       answer = _textController.text.trim();
       if (answer.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Напиши что-нибудь')),
+          SnackBar(content: Text(l10n.get('writeHere'))),
         );
         return;
       }
     } else {
       if (_selectedOption == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Выбери вариант')),
+          SnackBar(content: Text(l10n.get('selectOption'))),
         );
         return;
       }
@@ -134,7 +136,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка: $e')),
+        SnackBar(content: Text('${l10n.get('error')}: $e')),
       );
     } finally {
       setState(() => _isSubmitting = false);
@@ -160,9 +162,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Исповедь'),
+        title: Text(l10n.get('confession')),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
@@ -180,7 +183,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Вопрос ${_currentIndex + 1} из ${_questions.length}',
+              '${l10n.get('questionNumber')} ${_currentIndex + 1} ${l10n.get('of')} ${_questions.length}',
               style: TextStyle(color: Colors.grey[600]),
             ),
           ),
@@ -211,7 +214,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text(_currentIndex < _questions.length - 1 ? 'Далее' : 'Готово'),
+                    : Text(_currentIndex < _questions.length - 1 ? l10n.get('next') : l10n.get('done')),
               ),
             ),
           ),
@@ -228,7 +231,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         children: [
           // Вопрос
           Text(
-            question.text,
+            question.getText(context),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -240,7 +243,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           if (question.isOpenEnded)
             _buildOpenEndedInput()
           else
-            _buildOptions(question.options ?? []),
+            _buildOptions(question.getOptions(context) ?? []),
         ],
       ),
     );
@@ -311,11 +314,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Widget _buildOpenEndedInput() {
+    final l10n = AppLocalizations.of(context);
     return TextField(
       controller: _textController,
       maxLines: 5,
       decoration: InputDecoration(
-        hintText: 'Напиши здесь...',
+        hintText: l10n.get('writeHereHint'),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),

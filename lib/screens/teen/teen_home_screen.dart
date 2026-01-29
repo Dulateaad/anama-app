@@ -9,6 +9,7 @@ import '../../services/auth_service.dart';
 import '../../services/survey_service.dart';
 import '../../models/question.dart';
 import '../../widgets/accessible_text.dart';
+import '../../l10n/app_localizations.dart';
 import 'survey_screen.dart';
 
 class TeenHomeScreen extends StatefulWidget {
@@ -102,14 +103,16 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
       await launchUrl(uri);
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Позвони по номеру: $number')),
+          SnackBar(content: Text('${l10n.get('callNumber')}: $number')),
         );
       }
     }
   }
 
   void _showCrisisChat() {
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -137,7 +140,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Куда обратиться',
+                    l10n.get('whereToGo'),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -145,20 +148,20 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                   const SizedBox(height: 24),
                   _buildHelpOption(
                     icon: Icons.phone,
-                    title: 'Телефон доверия',
-                    subtitle: '150 — бесплатно, анонимно, 24/7',
+                    title: l10n.get('trustHotline'),
+                    subtitle: '150 — ${l10n.get('freeAnonymous247')}',
                     onTap: () => _callHotline('150'),
                   ),
                   _buildHelpOption(
                     icon: Icons.phone,
-                    title: 'Экстренная помощь',
-                    subtitle: '111 — скорая психологическая помощь',
+                    title: l10n.get('emergencyPsychHelp'),
+                    subtitle: l10n.get('emergencyHelp111'),
                     onTap: () => _callHotline('111'),
                   ),
                   _buildHelpOption(
                     icon: Icons.chat_bubble_outline,
-                    title: 'Онлайн-чат',
-                    subtitle: 'pomoschryadom.kz — напиши психологу',
+                    title: l10n.get('onlineChat'),
+                    subtitle: 'pomoschryadom.kz — ${l10n.get('writeToPsychologist')}',
                     onTap: () async {
                       final uri = Uri.parse('https://pomoschryadom.kz');
                       try {
@@ -181,7 +184,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Ты не один(а). Всё можно решить. Поговори с кем-то.',
+                            l10n.get('youAreNotAlone'),
                             style: TextStyle(color: Colors.blue[900]),
                           ),
                         ),
@@ -246,6 +249,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
   Widget build(BuildContext context) {
     final authService = context.read<AuthService>();
     final currentUserId = authService.currentUser?.uid;
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       body: SafeArea(
@@ -267,14 +271,14 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Привет! 👋',
+                                    l10n.get('hello'),
                                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    _getGreeting(),
+                                    l10n.getGreeting(),
                                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: Colors.grey[600],
                                     ),
@@ -310,7 +314,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Твой код для родителя:',
+                                        l10n.get('yourCodeForParent'),
                                         style: TextStyle(color: Colors.blue[700]),
                                       ),
                                       const SizedBox(height: 4),
@@ -331,7 +335,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                   onPressed: () {
                                     Clipboard.setData(ClipboardData(text: _uniqueCode!));
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Код скопирован ✓')),
+                                      SnackBar(content: Text(l10n.get('codeCopied'))),
                                     );
                                   },
                                 ),
@@ -366,7 +370,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                           Semantics(
                             header: true,
                             child: AccessibleText(
-                              'Клинические тесты',
+                              l10n.get('clinicalTests'),
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -377,7 +381,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                           if (_userAge != null && _userAge! >= 13 && _userAge! <= 17) ...[
                             Semantics(
                               button: true,
-                              label: 'Пройти тест "Светофор" для оценки эмоционального состояния',
+                              label: l10n.get('trafficLightTitle'),
                               child: Card(
                                 color: Colors.green[50],
                                 child: InkWell(
@@ -394,7 +398,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               AccessibleText(
-                                                'Светофор',
+                                                l10n.get('trafficLight'),
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18,
@@ -402,7 +406,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                               ),
                                               const SizedBox(height: 4),
                                               AccessibleText(
-                                                'Тест эмоционального состояния',
+                                                l10n.get('emotionalStateTest'),
                                                 style: TextStyle(
                                                   color: Colors.grey[700],
                                                   fontSize: 14,
@@ -426,7 +430,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                               Expanded(
                                 child: Semantics(
                                   button: true,
-                                  label: 'Пройти тест PHQ-9 для оценки депрессии',
+                                  label: l10n.get('phq9Title'),
                                   child: Card(
                                     child: InkWell(
                                       onTap: () => context.push('/phq9-test'),
@@ -453,7 +457,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                             ),
                                             const SizedBox(height: 8),
                                             AccessibleText(
-                                              'Тест на депрессию',
+                                              l10n.get('depressionTest'),
                                               style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontSize: 14,
@@ -470,7 +474,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                               Expanded(
                                 child: Semantics(
                                   button: true,
-                                  label: 'Пройти тест GAD-7 для оценки тревожности',
+                                  label: l10n.get('gad7Title'),
                                   child: Card(
                                     child: InkWell(
                                       onTap: () => context.push('/gad7-test'),
@@ -497,7 +501,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                             ),
                                             const SizedBox(height: 8),
                                             AccessibleText(
-                                              'Тест на тревожность',
+                                              l10n.get('anxietyTest'),
                                               style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontSize: 14,
@@ -535,7 +539,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                   Icon(Icons.favorite, color: Colors.red[700]),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Нужна помощь?',
+                                    l10n.get('needHelp'),
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.red[700],
@@ -545,7 +549,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                'Если тебе сейчас плохо — позвони. Мы поможем тебе. Ты не один(а), и всё можно решить вместе.',
+                                l10n.get('ifYouFeelBadCall'),
                                 style: TextStyle(
                                   color: Colors.red[900],
                                   fontSize: 15,
@@ -571,7 +575,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                     child: OutlinedButton.icon(
                                       onPressed: () => _showCrisisChat(),
                                       icon: const Icon(Icons.chat),
-                                      label: const Text('Чат'),
+                                      label: Text(l10n.get('chat')),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: Colors.red[700],
                                         side: BorderSide(color: Colors.red[300]!),
@@ -635,14 +639,14 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Мои чаты',
+                                            l10n.get('myChats'),
                                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            'Перейти к чатам с психологами',
+                                            l10n.get('goToChats'),
                                             style: TextStyle(
                                               color: Colors.grey[600],
                                               fontSize: 14,
@@ -692,14 +696,14 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Психологи',
+                                        l10n.get('psychologists'),
                                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Найди специалиста для беседы',
+                                        l10n.get('findSpecialist'),
                                         style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 14,
@@ -734,7 +738,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                                   Icon(Icons.shield, color: Colors.green[700]),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Твоя приватность',
+                                    l10n.get('yourPrivacy'),
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -744,18 +748,18 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                               const SizedBox(height: 12),
                               _buildPrivacyItem(
                                 '🔒',
-                                'Твои ответы анонимны',
-                                'Родители не видят дословные ответы',
+                                l10n.get('answersAnonymous'),
+                                l10n.get('parentsSeeSummary'),
                               ),
                               _buildPrivacyItem(
                                 '🤖',
-                                'AI анализирует настроение',
-                                'Не содержание, а общее состояние',
+                                l10n.get('aiAnalyzesMood'),
+                                l10n.get('notContent'),
                               ),
                               _buildPrivacyItem(
                                 '💚',
-                                'Цель — помочь',
-                                'Чтобы близкие понимали тебя лучше',
+                                l10n.get('goalIsHelp'),
+                                l10n.get('soLovedOnesUnderstand'),
                               ),
                             ],
                           ),
@@ -772,6 +776,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
   }
 
   Widget _buildSurveyCard() {
+    final l10n = AppLocalizations.of(context);
     // Получаем тему из контекста для определения пола
     final isMale = Theme.of(context).scaffoldBackgroundColor == const Color(0xFFF9FAFB);
     final gradientColors = isMale
@@ -814,9 +819,9 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Исповедь дня',
-                style: TextStyle(
+              Text(
+                l10n.get('confessionOfDay'),
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -824,7 +829,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Ответь на ${DefaultQuestions.dailyQuestions.length} вопросов. Это займет пару минут.',
+                l10n.get('answerQuestions'),
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.9),
                 ),
@@ -837,7 +842,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
                   foregroundColor: const Color(0xFFD4899A),
                   elevation: 0,
                 ),
-                child: const Text('Начать'),
+                child: Text(l10n.get('start')),
               ),
             ],
           ),
@@ -847,6 +852,7 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
   }
 
   Widget _buildCompletedCard() {
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -867,14 +873,14 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Готово на сегодня! 🎉',
+              l10n.get('completedToday'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Ты молодец! Приходи завтра.',
+              l10n.get('greatJob'),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.grey[600],
               ),
@@ -913,11 +919,5 @@ class _TeenHomeScreenState extends State<TeenHomeScreen> {
     );
   }
 
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Доброе утро!';
-    if (hour < 18) return 'Добрый день!';
-    return 'Добрый вечер!';
-  }
 }
 

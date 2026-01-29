@@ -35,6 +35,7 @@ class TrafficLightService {
           id: q['id'] ?? '',
           textRu: q['textRu'] ?? '',
           textKk: q['textKk'] ?? '',
+          textEn: q['textEn'] ?? q['textRu'] ?? '',
           order: q['order'] ?? 0,
           block: block,
         );
