@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Перехват share-modal.js и addEventListener(null) ДО любых других скриптов -->
+  <script>
+    (function(){
+      window.onerror=function(msg,url,line,col,e){
+        if(typeof msg!=='string') return false;
+        if(msg.indexOf('addEventListener')>=0 && msg.indexOf('null')>=0){ 
+          console.warn('[ignored]',msg); 
+          return true; 
+        }
+        if(msg.indexOf('Cannot read properties of null')>=0 && msg.indexOf('addEventListener')>=0){ 
+          console.warn('[ignored]',msg); 
+          return true; 
+        }
+        if(url&&(url.indexOf('share-modal')>=0||url.indexOf('share_modal')>=0)){ 
+          console.warn('[ignored] share-modal:',msg); 
+          return true; 
+        }
+        return false;
+      };
+    })();
+  </script>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+  <!-- Content Security Policy: разрешаем Flutter CanvasKit и изображения -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com; img-src 'self' data: https: http: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self' blob:;">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="anama">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>anama</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Защита от ошибок share-modal.js и других внешних скриптов -->
+  <script>
+    // Предотвращаем ошибки, если share-modal.js или другие скрипты пытаются найти несуществующие элементы
+    (function() {
+      // Перехватываем все ошибки до их обработки
+      window.addEventListener('error', function(e) {
+        // Игнорируем ошибки share-modal.js
+        if (e.message && e.message.includes('addEventListener') && 
+            e.message.includes('null') && 
+            (e.filename && (e.filename.includes('share-modal') || e.filename.includes('share_modal')))) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.warn('Share modal element not found, ignoring non-critical error');
+          return true;
+        }
+        // Игнорируем ошибки, связанные с null при вызове addEventListener
+        if (e.message && e.message.includes('Cannot read properties of null') && 
+            e.message.includes('addEventListener')) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.warn('Element not found for addEventListener, ignoring non-critical error');
+          return true;
+        }
+        return false;
+      }, true);
+      
+      // Также перехватываем unhandledrejection для промисов
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e.reason && e.reason.message && 
+            e.reason.message.includes('addEventListener') && 
+            e.reason.message.includes('null')) {
+          e.preventDefault();
+          console.warn('Unhandled promise rejection related to share-modal, ignoring');
+          return true;
+        }
+        return false;
+      });
+    })();
+  </script>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

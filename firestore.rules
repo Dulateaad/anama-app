@@ -1,0 +1,253 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Пользователи
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && (
+        request.auth.uid == userId ||
+        // Разрешить обновление linkedUserId для связки
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['linkedUserId', 'updatedAt']))
+      );
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Ответы на опросы
+    match /survey_responses/{responseId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Инсайты для родителей
+    match /daily_insights/{insightId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Вопросы
+    match /questions/{questionId} {
+      allow read: if request.auth != null;
+    }
+    
+    // Кризисные алерты
+    match /crisis_alerts/{alertId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Родительские согласия (GDPR)
+    match /parental_consents/{consentId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        resource.data.parentId == request.auth.uid;
+    }
+    
+    // Реестр согласий
+    match /consent_records/{recordId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Логи удаления (для доказательства GDPR)
+    match /deletion_logs/{logId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && 
+        resource.data.requestedBy == request.auth.uid;
+    }
+    
+    // Аудит логи
+    match /audit_log/{logId} {
+      allow create: if request.auth != null;
+      allow read: if false; // Только админы через консоль
+    }
+    
+    // OTP коды для родительского согласия
+    // Разрешаем создание/чтение/удаление без авторизации (нужно для процесса регистрации)
+    match /parental_consent_otps/{email} {
+      allow read, write: if true;
+    }
+    
+    // Карточки Serve and Return для детей 0-5 лет
+    match /serve_and_return_cards/{cardId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Только через Cloud Functions
+    }
+    
+    // Уведомления о результатах клинических тестов
+    match /clinical_test_notifications/{notificationId} {
+      allow read: if request.auth != null && resource.data.parentId == request.auth.uid;
+      allow update: if request.auth != null && resource.data.parentId == request.auth.uid;
+      allow create: if false; // Только через Cloud Functions
+    }
+    
+    // Клинические тесты PHQ-9
+    match /phq9_questions/{questionId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Только через Cloud Functions
+    }
+    
+    match /phq9_results/{resultId} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        // Родитель может читать результаты своего ребенка
+        exists(/databases/$(database)/documents/users/$(resource.data.userId)) &&
+        get(/databases/$(database)/documents/users/$(resource.data.userId)).data.linkedUserId == request.auth.uid
+      );
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // Результаты не изменяются
+    }
+    
+    // Клинические тесты GAD-7
+    match /gad7_questions/{questionId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Только через Cloud Functions
+    }
+    
+    match /gad7_results/{resultId} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        // Родитель может читать результаты своего ребенка
+        exists(/databases/$(database)/documents/users/$(resource.data.userId)) &&
+        get(/databases/$(database)/documents/users/$(resource.data.userId)).data.linkedUserId == request.auth.uid
+      );
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // Результаты не изменяются
+    }
+    
+    // Результаты теста "Светофор" (13-17 лет)
+    match /traffic_light_results/{resultId} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        // Родитель может читать результаты своего ребенка
+        exists(/databases/$(database)/documents/users/$(resource.data.userId)) &&
+        get(/databases/$(database)/documents/users/$(resource.data.userId)).data.linkedUserId == request.auth.uid
+      );
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // Результаты не изменяются
+    }
+    
+    // Жалобы и обращения пользователей
+    match /complaints/{complaintId} {
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        // Админы могут читать все жалобы (проверка через роль)
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      allow update, delete: if false; // Жалобы не изменяются
+    }
+    
+    // Психологи
+    match /psychologists/{psychologistId} {
+      // Психолог может читать свой профиль (даже если не верифицирован), остальные - только верифицированных
+      allow read: if request.auth != null && (
+        request.auth.uid == psychologistId ||
+        resource.data.isVerified == true
+      );
+      allow create: if request.auth != null && request.auth.uid == psychologistId;
+      allow update: if request.auth != null && (
+        request.auth.uid == psychologistId ||
+        // Админы могут обновлять для верификации
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      allow delete: if false; // Психологов нельзя удалять
+    }
+    
+    // Чаты с психологами
+    match /chats/{chatId} {
+      allow read: if request.auth != null && (
+        resource.data.participants.hasAny([request.auth.uid]) ||
+        resource.data.userId == request.auth.uid ||
+        resource.data.psychologistId == request.auth.uid
+      );
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (
+        resource.data.participants.hasAny([request.auth.uid]) ||
+        resource.data.userId == request.auth.uid ||
+        resource.data.psychologistId == request.auth.uid
+      );
+      allow delete: if false; // Чаты не удаляются
+      
+      // Сообщения в чатах
+      match /messages/{messageId} {
+        // Разрешаем чтение если пользователь участник чата или если чат еще не существует
+        allow read: if request.auth != null;
+        
+        // Разрешаем создание если пользователь авторизован и он отправитель
+        allow create: if request.auth != null && 
+          request.resource.data.senderId == request.auth.uid;
+        
+        // Разрешаем обновление статуса прочтения для авторизованных пользователей
+        allow update: if request.auth != null && 
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+        
+        allow delete: if false; // Сообщения не удаляются
+      }
+    }
+    
+    // Уведомления о чате (для отправки через Cloud Functions)
+    match /chat_notifications/{notificationId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && resource.data.recipientId == request.auth.uid;
+      allow update: if false; // Обновляется только через Cloud Functions
+      allow delete: if false;
+    }
+    
+    // Обратная связь
+    match /feedback/{feedbackId} {
+      // Любой авторизованный пользователь может создать обратную связь
+      allow create: if request.auth != null;
+      // Пользователь может читать только свою обратную связь
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Обновление и удаление только через Cloud Functions
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // Safety Alerts (критические уведомления)
+    match /safety_alerts/{alertId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && resource.data.parentId == request.auth.uid;
+      allow update: if request.auth != null && resource.data.parentId == request.auth.uid;
+      allow delete: if false;
+    }
+    
+    // Заявки на психолога
+    match /psychologist_requests/{requestId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (
+        resource.data.parentId == request.auth.uid ||
+        resource.data.psychologistId == request.auth.uid
+      );
+      allow update: if request.auth != null && (
+        resource.data.parentId == request.auth.uid ||
+        resource.data.psychologistId == request.auth.uid
+      );
+      allow delete: if false;
+    }
+    
+    // История прогресса
+    match /progress_history/{historyId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && resource.data.parentId == request.auth.uid;
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // Очередь уведомлений (для Cloud Functions)
+    match /notifications_queue/{notificationId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && resource.data.recipientId == request.auth.uid;
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // Прогресс развития мозга
+    match /brain_progress/{parentId} {
+      allow read: if request.auth != null && request.auth.uid == parentId;
+      allow create: if request.auth != null && request.auth.uid == parentId;
+      allow update: if request.auth != null && request.auth.uid == parentId;
+      allow delete: if false;
+    }
+  }
+}

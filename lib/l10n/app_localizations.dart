@@ -1,0 +1,776 @@
+import 'package:flutter/material.dart';
+
+/// Поддерживаемые языки
+enum AppLanguage {
+  en, // English (first/default)
+  ru, // Русский
+  kk, // Қазақша
+}
+
+extension AppLanguageExtension on AppLanguage {
+  String get code {
+    switch (this) {
+      case AppLanguage.en: return 'en';
+      case AppLanguage.ru: return 'ru';
+      case AppLanguage.kk: return 'kk';
+    }
+  }
+  
+  String get name {
+    switch (this) {
+      case AppLanguage.en: return 'English';
+      case AppLanguage.ru: return 'Русский';
+      case AppLanguage.kk: return 'Қазақша';
+    }
+  }
+  
+  String get flag {
+    switch (this) {
+      case AppLanguage.en: return '🇺🇸';
+      case AppLanguage.ru: return '🇷🇺';
+      case AppLanguage.kk: return '🇰🇿';
+    }
+  }
+  
+  Locale get locale {
+    switch (this) {
+      case AppLanguage.en: return const Locale('en', 'US');
+      case AppLanguage.ru: return const Locale('ru', 'RU');
+      case AppLanguage.kk: return const Locale('kk', 'KZ');
+    }
+  }
+}
+
+/// Класс локализации
+class AppLocalizations {
+  final Locale locale;
+  
+  AppLocalizations(this.locale);
+  
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+  
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  
+  static final Map<String, Map<String, String>> _localizedValues = {
+    // ═══════════════════════════════════════════════════════════════
+    // ҚАЗАҚША
+    // ═══════════════════════════════════════════════════════════════
+    'kk': {
+      // Жалпы
+      'appName': 'Anama',
+      'hello': 'Сәлем! 👋',
+      'goodMorning': 'Қайырлы таң!',
+      'goodAfternoon': 'Қайырлы күн!',
+      'goodEvening': 'Қайырлы кеш!',
+      'continue': 'Жалғастыру',
+      'done': 'Дайын',
+      'next': 'Келесі',
+      'back': 'Артқа',
+      'cancel': 'Болдырмау',
+      'save': 'Сақтау',
+      'send': 'Жіберу',
+      'loading': 'Жүктелуде...',
+      'error': 'Қате',
+      'success': 'Сәтті!',
+      
+      // Авторизация
+      'login': 'Кіру',
+      'register': 'Тіркелу',
+      'logout': 'Шығу',
+      'email': 'Email',
+      'password': 'Құпия сөз',
+      'nickname': 'Лақап ат',
+      'birthDate': 'Туған күні',
+      'iAmParent': 'Мен ата-анамын',
+      'iAmTeen': 'Мен жасөспірімін',
+      'welcomeToAnama': 'Anama-ға қош келдіңіз',
+      'loginToContinue': 'Жалғастыру үшін кіріңіз',
+      'noAccount': 'Аккаунт жоқ па? Тіркеліңіз',
+      'hasAccount': 'Аккаунт бар ма? Кіріңіз',
+      
+      // Жасөспірім экраны
+      'confession': 'Сырласу',
+      'confessionOfDay': 'Күннің сырласуы',
+      'answerQuestions': 'Бірнеше сұраққа жауап беріңіз',
+      'start': 'Бастау',
+      'completedToday': 'Бүгінге дайын! 🎉',
+      'greatJob': 'Жарайсың! Ертең келіңіз.',
+      'yourCodeForParent': 'Ата-ана үшін код:',
+      'codeCopied': 'Код көшірілді ✓',
+      'needHelp': 'Көмек керек пе?',
+      'callForHelp': 'Қазір жаман болса — қоңырау шал. Ол жерде көмектеседі.',
+      'chat': 'Чат',
+      'yourPrivacy': 'Сіздің құпиялылығыңыз',
+      'answersAnonymous': 'Жауаптарыңыз анонимді',
+      'parentsSeeSummary': 'Ата-аналар сөзбе-сөз жауаптарды көрмейді',
+      'aiAnalyzesMood': 'AI көңіл-күйді талдайды',
+      'notContent': 'Мазмұнды емес, жалпы жағдайды',
+      'goalIsHelp': 'Мақсат — көмектесу',
+      'soLovedOnesUnderstand': 'Жақындарыңыз сізді жақсы түсінуі үшін',
+      
+      // Сұрақтар
+      'howDoYouFeel': 'Бүгін өзіңізді қалай сезінесіз?',
+      'great': 'Тамаша 😊',
+      'normal': 'Қалыпты 😐',
+      'notGreat': 'Жақсы емес 😔',
+      'bad': 'Нашар 😢',
+      'whatMadeYouHappy': 'Бүгін сізді не қуантты?',
+      'doYouFeelUnderstood': 'Жақындарыңыз сізді түсінеді деп сезінесіз бе?',
+      'yesCompletely': 'Иә, толығымен',
+      'sometimes': 'Кейде',
+      'rarely': 'Сирек',
+      'noNotAtAll': 'Жоқ, мүлдем түсінбейді',
+      'doYouHaveGoals': 'Сіздің арманыңыз немесе мақсаттарыңыз бар ма?',
+      'yesMany': 'Иә, көп!',
+      'someGoals': 'Бірнеше бар',
+      'notSure': 'Сенімді емеспін',
+      'noNoPoint': 'Жоқ, мәні жоқ',
+      'whatWouldYouChange': 'Өміріңізде қазір нені өзгерткіңіз келеді?',
+      'howAreRelationshipsWithFriends': 'Достарыңызбен қарым-қатынасыңыз қалай?',
+      'excellent': 'Тамаша',
+      'good': 'Жақсы',
+      'complicated': 'Күрделі',
+      'noFriends': 'Достарым жоқ',
+      'ifYouCouldSaySomethingImportant': 'Маңызды нәрсе айтсаңыз, ол не болар еді?',
+      
+      // Ата-ана экраны
+      'soulAnalytics': 'Жан талдауы',
+      'waitingForData': 'Деректерді күтуде',
+      'childNotFilled': 'Бала бүгінгі сауалнаманы әлі толтырған жоқ.',
+      'insightAfterFilling': 'Түсінік толтырғаннан кейін пайда болады.',
+      'whatItMeans': 'Бұл не білдіреді',
+      'whatToDo': 'Не істеу керек',
+      'whatToSayToday': 'Бүгін не айту керек',
+      'contactPsychologist': 'Психологпен байланысу',
+      'emergencyHelp': 'Шұғыл көмек',
+      'history': 'Тарих',
+      
+      // Gemini AI
+      'geminiAI': '✨ Gemini AI',
+      'getServeAndReturn': 'Serve & Return тапсырмасын алу',
+      'taskTitle': 'Тапсырма',
+      'howToComplete': 'Қалай орындау:',
+      'whyItWorks': 'Неліктен жұмыс істейді',
+      'signsOfSuccess': 'Сәттілік белгісі',
+      'anotherTask': 'Басқа тапсырма',
+      'gotIt': 'Түсінікті!',
+      
+      // Гениялар
+      'geniusesInRiskZone': 'Қауіп аймағындағы данышпандар',
+      'greenLight': 'ЖАСЫЛ ЖОЛ',
+      'yellowZone': 'САРЫ АЙМАҚ',
+      'redZone': 'ҚЫЗЫЛ АЙМАҚ',
+      'youAreInFlow': 'Сіз ағымдасыз! 🔥',
+      'growthStage': 'Өсу кезеңі',
+      'weAreHere': 'Біз жанындамыз 💜',
+      'takeScreenshot': 'Скриншот жасап, сақтаңыз',
+      'anonymousConsultation': 'Анонимді консультация -10%',
+      'coolContinue': 'Тамаша, жалғастырамыз! 🔥',
+      'gotItKeepWorking': 'Түсінікті, жұмысты жалғастырамыз 💪',
+      'recommendPsychologist': 'Психологпен сөйлесуді ұсынамыз. Бұл жасыл аймаққа тезірек көшуге көмектеседі.',
+      
+      // Риск деңгейлері
+      'riskGreen': 'Бәрі жақсы',
+      'riskYellow': 'Назар аударуды қажет етеді',
+      'riskRed': 'Сыни деңгей',
+      'riskGreenDesc': 'Бала тұрақты және жақсы сезінеді.',
+      'riskYellowDesc': 'Алаңдаушылық немесе жасырын агрессия белгілері бар.',
+      'riskRedDesc': 'Сыни тәуекел. Стресс немесе деструктивті ойлардың жоғары деңгейі.',
+      
+      // Аккаунт байланыстыру
+      'linkAccount': 'Аккаунтты байланыстыру',
+      'enterChildCode': 'Баланың кодын енгізіңіз',
+      'codeHint': 'Балаңыздан 6 таңбалы кодты сұраңыз',
+      'link': 'Байланыстыру',
+      'accountLinked': 'Аккаунт сәтті байланыстырылды!',
+      'invalidCode': 'Қате код',
+      
+      // Тіл
+      'language': 'Тіл',
+      'selectLanguage': 'Тілді таңдаңыз',
+      
+      // PHQ-9 тест
+      'phq9Title': 'PHQ-9 тесті',
+      'phq9Subtitle': 'Депрессия деңгейін бағалау',
+      'phq9Question1': 'Соңғы 2 аптада, сізді қаншалықты жиі нашар көңіл-күй, басып кету немесе үмітсіздік алаңдатады?',
+      'phq9Question2': 'Соңғы 2 аптада, сізді қаншалықты жиі әдеттегі іс-әрекеттеріңізге қызығушылық немесе қуаныш жоқтығы алаңдатады?',
+      'phq9Question3': 'Соңғы 2 аптада, сізді қаншалықты жиі ұйықтауда немесе ұйқыда (тым ұзақ ұйықтау немесе тынышсыз ұйқы) мәселелер алаңдатады?',
+      'phq9Question4': 'Соңғы 2 аптада, сізді қаншалықты жиі шаршау немесе энергия жетіспеушілігі сезімі алаңдатады?',
+      'phq9Question5': 'Соңғы 2 аптада, сізді қаншалықты жиі нашар тамақтану немесе асыра тамақтану алаңдатады?',
+      'phq9Question6': 'Соңғы 2 аптада, сізді қаншалықты жиі өзіңізді нашар адам деп сезіну немесе өзіңізді немесе отбасыңызды алдағаныңыз сезімі алаңдатады?',
+      'phq9Question7': 'Соңғы 2 аптада, сізді қаншалықты жиі назар аудару мәселелері (мысалы, оқу немесе теледидар көру кезінде) алаңдатады?',
+      'phq9Question8': 'Соңғы 2 аптада, сіз басқалар байқауы мүмкін дегендей баяу қозғалдыңыз немесе сөйледіңіз бе? Немесе керісінше — сіз әдеттегіден әлдеқайда көп қозғалатын қиналған немесе алаңдаушы болдыңыз ба?',
+      'phq9Question9': 'Соңғы 2 аптада, сізде өлу немесе өзіңізге зиян келтіру туралы ойлар пайда болды ма?',
+      'phq9ResponseNotAtAll': 'Мүлдем жоқ',
+      'phq9ResponseSeveralDays': 'Бірнеше күн',
+      'phq9ResponseMoreThanHalf': 'Күндердің жартысынан көбі',
+      'phq9ResponseNearlyEveryDay': 'Дерлік күн сайын',
+      'phq9PleaseAnswerAll': 'Барлық сұрақтарға жауап беріңіз',
+      'phq9Submitting': 'Жіберілуде...',
+      'phq9Error': 'Қате',
+      'phq9ResultTitle': 'PHQ-9 нәтижесі',
+      'phq9TotalScore': 'Жалпы балл',
+      'phq9SeverityMinimal': 'Минималды депрессия',
+      'phq9SeverityMild': 'Жеңіл депрессия',
+      'phq9SeverityModerate': 'Орташа депрессия',
+      'phq9SeverityModeratelySevere': 'Орташа-ауыр депрессия',
+      'phq9SeveritySevere': 'Ауыр депрессия',
+      
+      // GAD-7 тест
+      'gad7Title': 'GAD-7 тесті',
+      'gad7Subtitle': 'Тревожность деңгейін бағалау',
+      'gad7Question1': 'Соңғы 2 аптада, сізді қаншалықты жиі нервоздық, мазасыздық немесе кернеу сезімі алаңдатады?',
+      'gad7Question2': 'Соңғы 2 аптада, сізді қаншалықты жиі мазасыздықты тоқтата алмау немесе басқара алмау алаңдатады?',
+      'gad7Question3': 'Соңғы 2 аптада, сізді қаншалықты жиі әртүрлі нәрселер туралы асыра мазасыздану алаңдатады?',
+      'gad7Question4': 'Соңғы 2 аптада, сізге қаншалықты жиі тыныштандыру қиын болды?',
+      'gad7Question5': 'Соңғы 2 аптада, сіз қаншалықты жиі отыра алмайтын дегендей мазасыз болдыңыз ба?',
+      'gad7Question6': 'Соңғы 2 аптада, сізді қаншалықты жиі ашуланшақтық немесе ашу тез пайда болуы алаңдатады?',
+      'gad7Question7': 'Соңғы 2 аптада, сізді қаншалықты жиі қорқыныш сезімі, сізге қорқынышты нәрсе болатын сияқты, алаңдатады?',
+      'gad7ResponseNotAtAll': 'Мүлдем жоқ',
+      'gad7ResponseSeveralDays': 'Бірнеше күн',
+      'gad7ResponseMoreThanHalf': 'Күндердің жартысынан көбі',
+      'gad7ResponseNearlyEveryDay': 'Дерлік күн сайын',
+      'gad7PleaseAnswerAll': 'Барлық сұрақтарға жауап беріңіз',
+      'gad7Submitting': 'Жіберілуде...',
+      'gad7Error': 'Қате',
+      'gad7ResultTitle': 'GAD-7 нәтижесі',
+      'gad7TotalScore': 'Жалпы балл',
+      'gad7SeverityMinimal': 'Минималды тревожность',
+      'gad7SeverityMild': 'Жеңіл тревожность',
+      'gad7SeverityModerate': 'Орташа тревожность',
+      'gad7SeveritySevere': 'Ауыр тревожность',
+      
+      // Результаты тестов (родитель)
+      'testResults': 'Тест нәтижелері',
+      'testPhq9': 'PHQ-9',
+      'testGad7': 'GAD-7',
+      'testSurvey': 'Күннің сырласуы',
+      'testDepression': 'Депрессия тесті',
+      'testAnxiety': 'Тревожность тесті',
+      'testDailySurvey': 'Күнделікті сауалнама',
+      'testScore': 'Балл',
+      'testDate': 'Күні',
+      'testDetails': 'Толығырақ',
+      'testAnalysis': 'Талдау',
+      'testRecommendations': 'Ұсыныстар',
+      'testProfessionalHelp': 'Мамандық кеңесі қажет пе?',
+      'testImmediateActions': 'Дереу іс-әрекеттер',
+      'testSupportPhrases': 'Қолдау сөздері',
+      'testResultTitle': 'Тест нәтижесі',
+      'newTestResults': 'Жаңа нәтижелер',
+      'surveyResultTitle': 'Сауалнама нәтижесі "Күннің сырласуы"',
+      'surveyRiskLevel': 'Тәуекел деңгейі',
+      
+      // Тест "Светофор" (13-17 лет)
+      'trafficLightTitle': 'Светофор тесті',
+      'trafficLightSubtitle': 'Сенің эмоционалдық жағдайыңды бағалау',
+      'trafficLightResponse0': '0 — Энергия көп',
+      'trafficLightResponse1': '1 — Бірнеше рет болды',
+      'trafficLightResponse2': '2 — Дерлік күн сайын',
+      'trafficLightResponse3': '3 — Мен үнемі нөлде',
+      'trafficLightDisclaimer': '⚠️ Маңызды: Бұл тест медициналық диагноз емес. ИИ анонимді түрде талдайды және тек тәуекел деңгейін көрсетеді.',
+      'trafficLightResultTitle': 'Светофор нәтижесі',
+      'trafficLightTotalScore': 'Жалпы балл',
+      'trafficLightBlockA': 'Блок А: Энергия',
+      'trafficLightBlockB': 'Блок Б: Тревожность',
+      'trafficLightBlockC': 'Блок В: Әлеуметтік',
+    },
+    
+    // ═══════════════════════════════════════════════════════════════
+    // РУССКИЙ
+    // ═══════════════════════════════════════════════════════════════
+    'ru': {
+      // Общее
+      'appName': 'Anama',
+      'hello': 'Привет! 👋',
+      'goodMorning': 'Доброе утро!',
+      'goodAfternoon': 'Добрый день!',
+      'goodEvening': 'Добрый вечер!',
+      'continue': 'Продолжить',
+      'done': 'Готово',
+      'next': 'Далее',
+      'back': 'Назад',
+      'cancel': 'Отмена',
+      'save': 'Сохранить',
+      'send': 'Отправить',
+      'loading': 'Загрузка...',
+      'error': 'Ошибка',
+      'success': 'Успешно!',
+      
+      // Авторизация
+      'login': 'Войти',
+      'register': 'Зарегистрироваться',
+      'logout': 'Выйти',
+      'email': 'Email',
+      'password': 'Пароль',
+      'nickname': 'Никнейм',
+      'birthDate': 'Дата рождения',
+      'iAmParent': 'Я родитель',
+      'iAmTeen': 'Я подросток',
+      'welcomeToAnama': 'Добро пожаловать в Anama',
+      'loginToContinue': 'Войдите, чтобы продолжить',
+      'noAccount': 'Нет аккаунта? Зарегистрироваться',
+      'hasAccount': 'Уже есть аккаунт? Войти',
+      
+      // Экран подростка
+      'confession': 'Исповедь',
+      'confessionOfDay': 'Исповедь дня',
+      'answerQuestions': 'Ответь на несколько вопросов',
+      'start': 'Начать',
+      'completedToday': 'Готово на сегодня! 🎉',
+      'greatJob': 'Ты молодец! Приходи завтра.',
+      'yourCodeForParent': 'Твой код для родителя:',
+      'codeCopied': 'Код скопирован ✓',
+      'needHelp': 'Нужна помощь?',
+      'callForHelp': 'Если тебе сейчас плохо — позвони. Там помогут.',
+      'chat': 'Чат',
+      'yourPrivacy': 'Твоя приватность',
+      'answersAnonymous': 'Твои ответы анонимны',
+      'parentsSeeSummary': 'Родители не видят дословные ответы',
+      'aiAnalyzesMood': 'AI анализирует настроение',
+      'notContent': 'Не содержание, а общее состояние',
+      'goalIsHelp': 'Цель — помочь',
+      'soLovedOnesUnderstand': 'Чтобы близкие понимали тебя лучше',
+      
+      // Вопросы
+      'howDoYouFeel': 'Как ты себя чувствуешь сегодня?',
+      'great': 'Отлично 😊',
+      'normal': 'Нормально 😐',
+      'notGreat': 'Не очень 😔',
+      'bad': 'Плохо 😢',
+      'whatMadeYouHappy': 'Было ли сегодня что-то, что тебя порадовало?',
+      'doYouFeelUnderstood': 'Чувствуешь ли ты, что тебя понимают близкие?',
+      'yesCompletely': 'Да, полностью',
+      'sometimes': 'Иногда',
+      'rarely': 'Редко',
+      'noNotAtAll': 'Нет, совсем не понимают',
+      'doYouHaveGoals': 'Есть ли у тебя цели или мечты, к которым ты стремишься?',
+      'yesMany': 'Да, много!',
+      'someGoals': 'Есть несколько',
+      'notSure': 'Не уверен(а)',
+      'noNoPoint': 'Нет, не вижу смысла',
+      'whatWouldYouChange': 'Что бы ты хотел(а) изменить в своей жизни прямо сейчас?',
+      'howAreRelationshipsWithFriends': 'Как ты оцениваешь свои отношения с друзьями?',
+      'excellent': 'Отличные',
+      'good': 'Хорошие',
+      'complicated': 'Сложные',
+      'noFriends': 'У меня нет друзей',
+      'ifYouCouldSaySomethingImportant': 'Если бы ты мог(ла) сказать что-то важное, что бы это было?',
+      
+      // Экран родителя
+      'soulAnalytics': 'Аналитика души',
+      'waitingForData': 'Ожидаем данные',
+      'childNotFilled': 'Ребенок пока не заполнил сегодняшний опросник.',
+      'insightAfterFilling': 'Инсайт появится после заполнения.',
+      'whatItMeans': 'Что это значит',
+      'whatToDo': 'Что делать',
+      'whatToSayToday': 'Что сказать сегодня',
+      'contactPsychologist': 'Связаться с психологом',
+      'emergencyHelp': 'Экстренная помощь',
+      'history': 'История',
+      
+      // Gemini AI
+      'geminiAI': '✨ Gemini AI',
+      'getServeAndReturn': 'Получить задание Serve & Return',
+      'taskTitle': 'Задание',
+      'howToComplete': 'Как выполнить:',
+      'whyItWorks': 'Почему это работает',
+      'signsOfSuccess': 'Признак успеха',
+      'anotherTask': 'Другое задание',
+      'gotIt': 'Понятно!',
+      
+      // Гении
+      'geniusesInRiskZone': 'Гении в зоне риска',
+      'greenLight': 'ЗЕЛЕНЫЙ СВЕТ',
+      'yellowZone': 'ЖЕЛТАЯ ЗОНА',
+      'redZone': 'КРАСНАЯ ЗОНА',
+      'youAreInFlow': 'Ты в потоке! 🔥',
+      'growthStage': 'Этап роста',
+      'weAreHere': 'Мы рядом 💜',
+      'takeScreenshot': 'Сделай скриншот и сохрани',
+      'anonymousConsultation': 'Анонимная консультация -10%',
+      'coolContinue': 'Круто, продолжаем! 🔥',
+      'gotItKeepWorking': 'Понятно, работаем дальше 💪',
+      'recommendPsychologist': 'Рекомендуем поговорить с психологом. Это поможет быстрее перейти в зеленую зону.',
+      
+      // Уровни риска
+      'riskGreen': 'Всё хорошо',
+      'riskYellow': 'Требует внимания',
+      'riskRed': 'Критический уровень',
+      'riskGreenDesc': 'Ребенок чувствует себя стабильно и хорошо.',
+      'riskYellowDesc': 'Появились маркеры тревоги или скрытой агрессии.',
+      'riskRedDesc': 'Критический риск. Высокий уровень стресса или деструктивных мыслей.',
+      
+      // Связка аккаунтов
+      'linkAccount': 'Связать аккаунт',
+      'enterChildCode': 'Введите код ребенка',
+      'codeHint': 'Попросите у ребенка 6-значный код',
+      'link': 'Связать',
+      'accountLinked': 'Аккаунт успешно связан!',
+      'invalidCode': 'Неверный код',
+      
+      // Язык
+      'language': 'Язык',
+      'selectLanguage': 'Выберите язык',
+      
+      // PHQ-9 тест
+      'phq9Title': 'Тест PHQ-9',
+      'phq9Subtitle': 'Оценка уровня депрессии',
+      'phq9Question1': 'За последние 2 недели, как часто тебя беспокоило плохое настроение, подавленность или безнадежность?',
+      'phq9Question2': 'За последние 2 недели, как часто тебя беспокоило отсутствие интереса или удовольствия от того, чем ты обычно занимаешься?',
+      'phq9Question3': 'За последние 2 недели, как часто у тебя были проблемы с засыпанием или сном (слишком долгий сон или беспокойный сон)?',
+      'phq9Question4': 'За последние 2 недели, как часто ты чувствовал(а) усталость или нехватку энергии?',
+      'phq9Question5': 'За последние 2 недели, как часто у тебя был плохой аппетит или ты переедал(а)?',
+      'phq9Question6': 'За последние 2 недели, как часто ты чувствовал(а) себя плохо из-за того, что ты плохой человек, или что ты подвел(а) себя или свою семью?',
+      'phq9Question7': 'За последние 2 недели, как часто у тебя были проблемы с концентрацией внимания (например, при чтении или просмотре телевизора)?',
+      'phq9Question8': 'За последние 2 недели, двигался ли ты или говорил так медленно, что другие могли это заметить? Или наоборот — был настолько беспокойным или суетливым, что двигался намного больше обычного?',
+      'phq9Question9': 'За последние 2 недели, возникали ли у тебя мысли о том, что лучше было бы умереть, или о причинении себе вреда?',
+      'phq9ResponseNotAtAll': 'Совсем нет',
+      'phq9ResponseSeveralDays': 'Несколько дней',
+      'phq9ResponseMoreThanHalf': 'Больше половины дней',
+      'phq9ResponseNearlyEveryDay': 'Почти каждый день',
+      'phq9PleaseAnswerAll': 'Пожалуйста, ответьте на все вопросы',
+      'phq9Submitting': 'Отправка...',
+      'phq9Error': 'Ошибка',
+      'phq9ResultTitle': 'Результат теста PHQ-9',
+      'phq9TotalScore': 'Общий балл',
+      'phq9SeverityMinimal': 'Минимальная депрессия',
+      'phq9SeverityMild': 'Легкая депрессия',
+      'phq9SeverityModerate': 'Умеренная депрессия',
+      'phq9SeverityModeratelySevere': 'Умеренно-тяжелая депрессия',
+      'phq9SeveritySevere': 'Тяжелая депрессия',
+      
+      // GAD-7 тест
+      'gad7Title': 'Тест GAD-7',
+      'gad7Subtitle': 'Оценка уровня тревожности',
+      'gad7Question1': 'За последние 2 недели, как часто тебя беспокоило чувство нервозности, тревоги или напряжения?',
+      'gad7Question2': 'За последние 2 недели, как часто тебя беспокоило то, что ты не мог(ла) остановить или контролировать беспокойство?',
+      'gad7Question3': 'За последние 2 недели, как часто тебя беспокоило чрезмерное беспокойство о разных вещах?',
+      'gad7Question4': 'За последние 2 недели, как часто тебе было трудно расслабиться?',
+      'gad7Question5': 'За последние 2 недели, как часто ты был(а) настолько беспокойным(ой), что тебе было трудно усидеть на месте?',
+      'gad7Question6': 'За последние 2 недели, как часто тебя беспокоила раздражительность или легкость возникновения злости?',
+      'gad7Question7': 'За последние 2 недели, как часто тебя беспокоило чувство страха, как будто должно произойти что-то ужасное?',
+      'gad7ResponseNotAtAll': 'Совсем нет',
+      'gad7ResponseSeveralDays': 'Несколько дней',
+      'gad7ResponseMoreThanHalf': 'Больше половины дней',
+      'gad7ResponseNearlyEveryDay': 'Почти каждый день',
+      'gad7PleaseAnswerAll': 'Пожалуйста, ответьте на все вопросы',
+      'gad7Submitting': 'Отправка...',
+      'gad7Error': 'Ошибка',
+      'gad7ResultTitle': 'Результат теста GAD-7',
+      'gad7TotalScore': 'Общий балл',
+      'gad7SeverityMinimal': 'Минимальная тревожность',
+      'gad7SeverityMild': 'Легкая тревожность',
+      'gad7SeverityModerate': 'Умеренная тревожность',
+      'gad7SeveritySevere': 'Тяжелая тревожность',
+      
+      // Результаты тестов (родитель)
+      'testResults': 'Результаты тестов',
+      'testPhq9': 'PHQ-9',
+      'testGad7': 'GAD-7',
+      'testSurvey': 'Исповедь дня',
+      'testDepression': 'Тест на депрессию',
+      'testAnxiety': 'Тест на тревожность',
+      'testDailySurvey': 'Ежедневный опросник',
+      'testScore': 'Балл',
+      'testDate': 'Дата',
+      'testDetails': 'Подробнее',
+      'testAnalysis': 'Анализ',
+      'testRecommendations': 'Рекомендации',
+      'testProfessionalHelp': 'Нужна ли консультация специалиста?',
+      'testImmediateActions': 'Немедленные действия',
+      'testSupportPhrases': 'Фразы поддержки',
+      'testResultTitle': 'Результат теста',
+      'newTestResults': 'Новые результаты',
+      'surveyResultTitle': 'Результат опросника "Исповедь дня"',
+      'surveyRiskLevel': 'Уровень риска',
+      
+      // Тест "Светофор" (13-17 лет)
+      'trafficLightTitle': 'Тест "Светофор"',
+      'trafficLightSubtitle': 'Оценка твоего эмоционального состояния',
+      'trafficLightResponse0': '0 — Энергии валом',
+      'trafficLightResponse1': '1 — Пару раз было',
+      'trafficLightResponse2': '2 — Почти каждый день',
+      'trafficLightResponse3': '3 — Я постоянно на нуле',
+      'trafficLightDisclaimer': '⚠️ Важно: Этот тест не является медицинским диагнозом. ИИ анализирует данные анонимно и выдает только уровень риска.',
+      'trafficLightResultTitle': 'Результат теста "Светофор"',
+      'trafficLightTotalScore': 'Общий балл',
+      'trafficLightBlockA': 'Блок А: Энергия',
+      'trafficLightBlockB': 'Блок Б: Тревога',
+      'trafficLightBlockC': 'Блок В: Социальный',
+    },
+    
+    // ═══════════════════════════════════════════════════════════════
+    // ENGLISH
+    // ═══════════════════════════════════════════════════════════════
+    'en': {
+      // General
+      'appName': 'Anama',
+      'hello': 'Hello! 👋',
+      'goodMorning': 'Good morning!',
+      'goodAfternoon': 'Good afternoon!',
+      'goodEvening': 'Good evening!',
+      'continue': 'Continue',
+      'done': 'Done',
+      'next': 'Next',
+      'back': 'Back',
+      'cancel': 'Cancel',
+      'save': 'Save',
+      'send': 'Send',
+      'loading': 'Loading...',
+      'error': 'Error',
+      'success': 'Success!',
+      
+      // Auth
+      'login': 'Log In',
+      'register': 'Register',
+      'logout': 'Log Out',
+      'email': 'Email',
+      'password': 'Password',
+      'nickname': 'Nickname',
+      'birthDate': 'Birth Date',
+      'iAmParent': 'I am a parent',
+      'iAmTeen': 'I am a teen',
+      'welcomeToAnama': 'Welcome to Anama',
+      'loginToContinue': 'Log in to continue',
+      'noAccount': 'No account? Register',
+      'hasAccount': 'Already have an account? Log in',
+      
+      // Teen screen
+      'confession': 'Confession',
+      'confessionOfDay': 'Daily Confession',
+      'answerQuestions': 'Answer a few questions',
+      'start': 'Start',
+      'completedToday': 'Done for today! 🎉',
+      'greatJob': 'Great job! Come back tomorrow.',
+      'yourCodeForParent': 'Your code for parent:',
+      'codeCopied': 'Code copied ✓',
+      'needHelp': 'Need help?',
+      'callForHelp': 'If you are struggling right now — call. They will help.',
+      'chat': 'Chat',
+      'yourPrivacy': 'Your privacy',
+      'answersAnonymous': 'Your answers are anonymous',
+      'parentsSeeSummary': 'Parents don\'t see exact answers',
+      'aiAnalyzesMood': 'AI analyzes mood',
+      'notContent': 'Not content, but overall state',
+      'goalIsHelp': 'Goal is to help',
+      'soLovedOnesUnderstand': 'So loved ones understand you better',
+      
+      // Questions
+      'howDoYouFeel': 'How are you feeling today?',
+      'great': 'Great 😊',
+      'normal': 'Normal 😐',
+      'notGreat': 'Not great 😔',
+      'bad': 'Bad 😢',
+      'whatMadeYouHappy': 'Was there anything that made you happy today?',
+      'doYouFeelUnderstood': 'Do you feel understood by your loved ones?',
+      'yesCompletely': 'Yes, completely',
+      'sometimes': 'Sometimes',
+      'rarely': 'Rarely',
+      'noNotAtAll': 'No, not at all',
+      'doYouHaveGoals': 'Do you have goals or dreams you\'re working towards?',
+      'yesMany': 'Yes, many!',
+      'someGoals': 'A few',
+      'notSure': 'Not sure',
+      'noNoPoint': 'No, I don\'t see the point',
+      'whatWouldYouChange': 'What would you like to change in your life right now?',
+      'howAreRelationshipsWithFriends': 'How would you rate your relationships with friends?',
+      'excellent': 'Excellent',
+      'good': 'Good',
+      'complicated': 'Complicated',
+      'noFriends': 'I have no friends',
+      'ifYouCouldSaySomethingImportant': 'If you could say something important, what would it be?',
+      
+      // Parent screen
+      'soulAnalytics': 'Soul Analytics',
+      'waitingForData': 'Waiting for data',
+      'childNotFilled': 'Child hasn\'t filled today\'s survey yet.',
+      'insightAfterFilling': 'Insight will appear after completion.',
+      'whatItMeans': 'What this means',
+      'whatToDo': 'What to do',
+      'whatToSayToday': 'What to say today',
+      'contactPsychologist': 'Contact a psychologist',
+      'emergencyHelp': 'Emergency help',
+      'history': 'History',
+      
+      // Gemini AI
+      'geminiAI': '✨ Gemini AI',
+      'getServeAndReturn': 'Get Serve & Return task',
+      'taskTitle': 'Task',
+      'howToComplete': 'How to complete:',
+      'whyItWorks': 'Why it works',
+      'signsOfSuccess': 'Sign of success',
+      'anotherTask': 'Another task',
+      'gotIt': 'Got it!',
+      
+      // Geniuses
+      'geniusesInRiskZone': 'Geniuses in Risk Zone',
+      'greenLight': 'GREEN LIGHT',
+      'yellowZone': 'YELLOW ZONE',
+      'redZone': 'RED ZONE',
+      'youAreInFlow': 'You\'re in the flow! 🔥',
+      'growthStage': 'Growth stage',
+      'weAreHere': 'We\'re here 💜',
+      'takeScreenshot': 'Take a screenshot and save',
+      'anonymousConsultation': 'Anonymous consultation -10%',
+      'coolContinue': 'Awesome, keep going! 🔥',
+      'gotItKeepWorking': 'Got it, let\'s keep working 💪',
+      'recommendPsychologist': 'We recommend talking to a psychologist. It will help you reach the green zone faster.',
+      
+      // Risk levels
+      'riskGreen': 'All good',
+      'riskYellow': 'Needs attention',
+      'riskRed': 'Critical level',
+      'riskGreenDesc': 'Child feels stable and good.',
+      'riskYellowDesc': 'Signs of anxiety or hidden aggression appeared.',
+      'riskRedDesc': 'Critical risk. High level of stress or destructive thoughts.',
+      
+      // Account linking
+      'linkAccount': 'Link account',
+      'enterChildCode': 'Enter child\'s code',
+      'codeHint': 'Ask your child for the 6-digit code',
+      'link': 'Link',
+      'accountLinked': 'Account successfully linked!',
+      'invalidCode': 'Invalid code',
+      
+      // Language
+      'language': 'Language',
+      'selectLanguage': 'Select language',
+      
+      // PHQ-9 test
+      'phq9Title': 'PHQ-9 Test',
+      'phq9Subtitle': 'Depression Level Assessment',
+      'phq9Question1': 'Over the last 2 weeks, how often have you been bothered by feeling down, depressed, or hopeless?',
+      'phq9Question2': 'Over the last 2 weeks, how often have you been bothered by little interest or pleasure in doing things?',
+      'phq9Question3': 'Over the last 2 weeks, how often have you had trouble falling or staying asleep, or sleeping too much?',
+      'phq9Question4': 'Over the last 2 weeks, how often have you felt tired or had little energy?',
+      'phq9Question5': 'Over the last 2 weeks, how often have you had poor appetite or overeating?',
+      'phq9Question6': 'Over the last 2 weeks, how often have you felt bad about yourself — or that you are a failure or have let yourself or your family down?',
+      'phq9Question7': 'Over the last 2 weeks, how often have you had trouble concentrating on things, such as reading or watching TV?',
+      'phq9Question8': 'Over the last 2 weeks, have you been moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual?',
+      'phq9Question9': 'Over the last 2 weeks, have you had thoughts that you would be better off dead, or of hurting yourself?',
+      'phq9ResponseNotAtAll': 'Not at all',
+      'phq9ResponseSeveralDays': 'Several days',
+      'phq9ResponseMoreThanHalf': 'More than half the days',
+      'phq9ResponseNearlyEveryDay': 'Nearly every day',
+      'phq9PleaseAnswerAll': 'Please answer all questions',
+      'phq9Submitting': 'Submitting...',
+      'phq9Error': 'Error',
+      'phq9ResultTitle': 'PHQ-9 Result',
+      'phq9TotalScore': 'Total Score',
+      'phq9SeverityMinimal': 'Minimal depression',
+      'phq9SeverityMild': 'Mild depression',
+      'phq9SeverityModerate': 'Moderate depression',
+      'phq9SeverityModeratelySevere': 'Moderately severe depression',
+      'phq9SeveritySevere': 'Severe depression',
+      
+      // GAD-7 test
+      'gad7Title': 'GAD-7 Test',
+      'gad7Subtitle': 'Anxiety Level Assessment',
+      'gad7Question1': 'Over the last 2 weeks, how often have you been bothered by feeling nervous, anxious, or on edge?',
+      'gad7Question2': 'Over the last 2 weeks, how often have you been bothered by not being able to stop or control worrying?',
+      'gad7Question3': 'Over the last 2 weeks, how often have you been bothered by worrying too much about different things?',
+      'gad7Question4': 'Over the last 2 weeks, how often have you had trouble relaxing?',
+      'gad7Question5': 'Over the last 2 weeks, how often have you been so restless that it is hard to sit still?',
+      'gad7Question6': 'Over the last 2 weeks, how often have you been bothered by becoming easily annoyed or irritable?',
+      'gad7Question7': 'Over the last 2 weeks, how often have you been bothered by feeling afraid, as if something awful might happen?',
+      'gad7ResponseNotAtAll': 'Not at all',
+      'gad7ResponseSeveralDays': 'Several days',
+      'gad7ResponseMoreThanHalf': 'More than half the days',
+      'gad7ResponseNearlyEveryDay': 'Nearly every day',
+      'gad7PleaseAnswerAll': 'Please answer all questions',
+      'gad7Submitting': 'Submitting...',
+      'gad7Error': 'Error',
+      'gad7ResultTitle': 'GAD-7 Result',
+      'gad7TotalScore': 'Total Score',
+      'gad7SeverityMinimal': 'Minimal anxiety',
+      'gad7SeverityMild': 'Mild anxiety',
+      'gad7SeverityModerate': 'Moderate anxiety',
+      'gad7SeveritySevere': 'Severe anxiety',
+      
+      // Test results (parent)
+      'testResults': 'Test Results',
+      'testPhq9': 'PHQ-9',
+      'testGad7': 'GAD-7',
+      'testSurvey': 'Daily Confession',
+      'testDepression': 'Depression Test',
+      'testAnxiety': 'Anxiety Test',
+      'testDailySurvey': 'Daily Survey',
+      'testScore': 'Score',
+      'testDate': 'Date',
+      'testDetails': 'Details',
+      'testAnalysis': 'Analysis',
+      'testRecommendations': 'Recommendations',
+      'testProfessionalHelp': 'Is professional help needed?',
+      'testImmediateActions': 'Immediate actions',
+      'testSupportPhrases': 'Support phrases',
+      'testResultTitle': 'Test Result',
+      'newTestResults': 'New results',
+      'surveyResultTitle': 'Daily Confession Survey Result',
+      'surveyRiskLevel': 'Risk level',
+      
+      // Traffic Light test (13-17 years)
+      'trafficLightTitle': 'Traffic Light Test',
+      'trafficLightSubtitle': 'Assessing your emotional state',
+      'trafficLightResponse0': '0 — Lots of energy',
+      'trafficLightResponse1': '1 — A few times',
+      'trafficLightResponse2': '2 — Almost every day',
+      'trafficLightResponse3': '3 — I\'m constantly at zero',
+      'trafficLightDisclaimer': '⚠️ Important: This test is not a medical diagnosis. AI analyzes data anonymously and only shows risk level.',
+      'trafficLightResultTitle': 'Traffic Light Test Result',
+      'trafficLightTotalScore': 'Total Score',
+      'trafficLightBlockA': 'Block A: Energy',
+      'trafficLightBlockB': 'Block B: Anxiety',
+      'trafficLightBlockC': 'Block C: Social',
+    },
+  };
+  
+  String get(String key) {
+    final langCode = locale.languageCode;
+    return _localizedValues[langCode]?[key] ?? 
+           _localizedValues['ru']?[key] ?? 
+           key;
+  }
+  
+  // Удобные геттеры
+  String get appName => get('appName');
+  String get hello => get('hello');
+  String get login => get('login');
+  String get register => get('register');
+  String get logout => get('logout');
+  String get email => get('email');
+  String get password => get('password');
+  String get nickname => get('nickname');
+  String get next => get('next');
+  String get done => get('done');
+  String get loading => get('loading');
+  String get language => get('language');
+  String get selectLanguage => get('selectLanguage');
+  
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return get('goodMorning');
+    if (hour < 18) return get('goodAfternoon');
+    return get('goodEvening');
+  }
+}
+
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+  
+  @override
+  bool isSupported(Locale locale) {
+    return ['kk', 'ru', 'en'].contains(locale.languageCode);
+  }
+  
+  @override
+  Future<AppLocalizations> load(Locale locale) async {
+    return AppLocalizations(locale);
+  }
+  
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
