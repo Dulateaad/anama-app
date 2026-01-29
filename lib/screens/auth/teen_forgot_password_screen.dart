@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../widgets/accessible_text.dart';
 
 class TeenForgotPasswordScreen extends StatefulWidget {
@@ -107,6 +108,8 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -122,7 +125,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
             }
           },
         ),
-        title: const Text('Сброс пароля'),
+        title: Text(l10n.get('resetPassword')),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -147,6 +150,8 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
   }
 
   Widget _buildNicknameStep() {
+    final l10n = AppLocalizations.of(context);
+    
     return Form(
       key: _nicknameFormKey,
       child: Column(
@@ -174,7 +179,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           Semantics(
             header: true,
             child: AccessibleText(
-              'Забыл пароль? 🤔',
+              l10n.get('teenForgotPassword'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -185,7 +190,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           const SizedBox(height: 12),
           
           AccessibleText(
-            'Не переживай! Мы отправим код твоему родителю, и он поможет тебе восстановить доступ',
+            l10n.get('teenForgotPasswordDesc'),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
@@ -200,15 +205,14 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Поле никнейма
           Semantics(
             textField: true,
-            label: 'Никнейм',
-            hint: 'Введи свой никнейм',
+            label: l10n.get('nickname'),
             child: TextFormField(
               controller: _nicknameController,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _requestCode(),
               decoration: InputDecoration(
-                labelText: 'Твой никнейм',
-                hintText: 'Как тебя зовут в приложении?',
+                labelText: l10n.get('yourNickname'),
+                hintText: l10n.get('yourNickname'),
                 prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -216,10 +220,10 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введи свой никнейм';
+                  return l10n.get('enterNickname');
                 }
                 if (value.length < 3) {
-                  return 'Минимум 3 символа';
+                  return l10n.get('minChars');
                 }
                 return null;
               },
@@ -231,7 +235,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Кнопка
           Semantics(
             button: true,
-            label: 'Отправить код родителю',
+            label: l10n.get('sendCodeToParent'),
             enabled: !_isLoading,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _requestCode,
@@ -248,9 +252,9 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      'Отправить код родителю',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  : Text(
+                      l10n.get('sendCodeToParent'),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
             ),
           ),
@@ -260,7 +264,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           TextButton.icon(
             onPressed: () => context.go('/login'),
             icon: const Icon(Icons.arrow_back, size: 18),
-            label: const Text('Вернуться ко входу'),
+            label: Text(l10n.get('backToLogin')),
           ),
         ],
       ),
@@ -268,6 +272,8 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
   }
 
   Widget _buildCodeStep() {
+    final l10n = AppLocalizations.of(context);
+    
     return Form(
       key: _codeFormKey,
       child: Column(
@@ -295,7 +301,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           Semantics(
             header: true,
             child: AccessibleText(
-              'Код отправлен! 📧',
+              l10n.get('codeSent'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -306,7 +312,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           const SizedBox(height: 12),
           
           AccessibleText(
-            'Попроси родителя посмотреть почту $_maskedParentEmail и сказать тебе код',
+            '${l10n.get('codeSentDesc')} $_maskedParentEmail',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
@@ -321,8 +327,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Поле кода
           Semantics(
             textField: true,
-            label: 'Код от родителя',
-            hint: 'Введи 6-значный код',
+            label: l10n.get('codeFromParent'),
             child: TextFormField(
               controller: _codeController,
               textInputAction: TextInputAction.next,
@@ -332,7 +337,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
                 LengthLimitingTextInputFormatter(6),
               ],
               decoration: InputDecoration(
-                labelText: 'Код от родителя',
+                labelText: l10n.get('codeFromParent'),
                 hintText: '123456',
                 prefixIcon: const Icon(Icons.pin_outlined),
                 border: OutlineInputBorder(
@@ -347,10 +352,10 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
               textAlign: TextAlign.center,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введи код';
+                  return l10n.get('enterCode');
                 }
                 if (value.length != 6) {
-                  return 'Код должен быть из 6 цифр';
+                  return l10n.get('codeMustBe6Digits');
                 }
                 return null;
               },
@@ -362,15 +367,14 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Новый пароль
           Semantics(
             textField: true,
-            label: 'Новый пароль',
-            hint: 'Придумай новый пароль',
+            label: l10n.get('newPassword'),
             child: TextFormField(
               controller: _newPasswordController,
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Новый пароль',
-                hintText: 'Придумай новый пароль',
+                labelText: l10n.get('newPassword'),
+                hintText: l10n.get('enterNewPassword'),
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
@@ -382,10 +386,10 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введи новый пароль';
+                  return l10n.get('enterNewPassword');
                 }
                 if (value.length < 6) {
-                  return 'Минимум 6 символов';
+                  return l10n.get('minPasswordChars');
                 }
                 return null;
               },
@@ -397,16 +401,15 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Подтверждение пароля
           Semantics(
             textField: true,
-            label: 'Повтори пароль',
-            hint: 'Введи пароль ещё раз',
+            label: l10n.get('confirmPassword'),
             child: TextFormField(
               controller: _confirmPasswordController,
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _resetPassword(),
               decoration: InputDecoration(
-                labelText: 'Повтори пароль',
-                hintText: 'Введи пароль ещё раз',
+                labelText: l10n.get('confirmPassword'),
+                hintText: l10n.get('repeatPassword'),
                 prefixIcon: const Icon(Icons.lock_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -414,10 +417,10 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Повтори пароль';
+                  return l10n.get('confirmPassword');
                 }
                 if (value != _newPasswordController.text) {
-                  return 'Пароли не совпадают';
+                  return l10n.get('passwordsNotMatch');
                 }
                 return null;
               },
@@ -429,7 +432,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Кнопка
           Semantics(
             button: true,
-            label: 'Сменить пароль',
+            label: l10n.get('changePassword'),
             enabled: !_isLoading,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _resetPassword,
@@ -446,9 +449,9 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      'Сменить пароль',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  : Text(
+                      l10n.get('changePassword'),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
             ),
           ),
@@ -458,7 +461,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
           // Повторная отправка
           TextButton(
             onPressed: _isLoading ? null : _requestCode,
-            child: const Text('Отправить код ещё раз'),
+            child: Text(l10n.get('sendAgain')),
           ),
         ],
       ),
@@ -466,6 +469,8 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
   }
 
   Widget _buildSuccessStep() {
+    final l10n = AppLocalizations.of(context);
+    
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -490,7 +495,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
         Semantics(
           header: true,
           child: AccessibleText(
-            'Пароль изменён! 🎉',
+            l10n.get('passwordChanged'),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -501,7 +506,7 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
         const SizedBox(height: 16),
         
         AccessibleText(
-          'Теперь ты можешь войти с новым паролем',
+          l10n.get('passwordChangedDesc'),
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Colors.grey[600],
           ),
@@ -517,9 +522,9 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: const Text(
-              'Перейти ко входу',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            child: Text(
+              l10n.get('goToLogin'),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -528,9 +533,11 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
   }
 
   Widget _buildErrorMessage() {
+    final l10n = AppLocalizations.of(context);
+    
     return Semantics(
       liveRegion: true,
-      label: 'Ошибка: $_errorMessage',
+      label: '${l10n.get('error')}: $_errorMessage',
       child: Container(
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.only(bottom: 16),
@@ -559,4 +566,3 @@ class _TeenForgotPasswordScreenState extends State<TeenForgotPasswordScreen> {
     );
   }
 }
-

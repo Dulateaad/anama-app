@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         // Проверяем, что это действительно психолог
         if (user.role != UserRole.psychologist) {
           setState(() {
-            _errorMessage = 'Этот аккаунт не является аккаунтом психолога';
+            _errorMessage = AppLocalizations.of(context).get('notPsychologistAccount');
           });
           return;
         }
@@ -249,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   tabs: [
                     Tab(text: '👦 ${l10n.get('iAmTeen')}'),
                     Tab(text: '👩 ${l10n.get('iAmParent')}'),
-                    Tab(text: '🧠 Психолог'),
+                    Tab(text: '🧠 ${l10n.get('psychologist')}'),
                   ],
                 ),
               ),
@@ -325,14 +325,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         children: [
           Semantics(
             textField: true,
-            label: 'Никнейм подростка',
-            hint: 'Введите ваш никнейм для входа',
+            label: l10n.get('nickname'),
+            hint: l10n.get('enterNickname'),
             child: TextFormField(
               controller: _nicknameController,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Никнейм',
-                hintText: 'Твой никнейм',
+                labelText: l10n.get('nickname'),
+                hintText: l10n.get('yourNickname'),
                 prefixIcon: const Icon(Icons.person),
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(width: 1.5),
@@ -341,10 +341,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введи никнейм';
+                  return l10n.get('enterNickname');
                 }
                 if (value.length < 3) {
-                  return 'Минимум 3 символа';
+                  return l10n.get('minChars');
                 }
                 return null;
               },
@@ -355,20 +355,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           
           Semantics(
             textField: true,
-            label: 'Пароль подростка',
-            hint: 'Введите ваш пароль',
+            label: l10n.get('password'),
+            hint: l10n.get('enterPassword'),
             child: TextFormField(
               controller: _teenPasswordController,
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _loginTeen(),
               decoration: InputDecoration(
-                labelText: 'Пароль',
-                hintText: 'Твой пароль',
+                labelText: l10n.get('password'),
+                hintText: l10n.get('yourPassword'),
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: Semantics(
                   button: true,
-                  label: _obscurePassword ? 'Показать пароль' : 'Скрыть пароль',
+                  label: _obscurePassword ? l10n.get('showPassword') : l10n.get('hidePassword'),
                   child: IconButton(
                     icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                     onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -381,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введи пароль';
+                  return l10n.get('enterPassword');
                 }
                 return null;
               },
@@ -392,8 +392,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           
           Semantics(
             button: true,
-            label: 'Войти как подросток',
-            hint: 'Войти в аккаунт подростка',
+            label: l10n.get('login'),
             enabled: !_isLoading,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _loginTeen,
@@ -408,7 +407,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      AppLocalizations.of(context).login,
+                      l10n.login,
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
             ),
@@ -418,12 +417,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           
           TextButton(
             onPressed: () => context.go('/teen-forgot-password'),
-            child: const Text('Забыл пароль?'),
+            child: Text(l10n.get('forgotPassword')),
           ),
           
           TextButton(
             onPressed: () => context.go('/register'),
-            child: Text(AppLocalizations.of(context).get('noAccount')),
+            child: Text(l10n.get('noAccount')),
           ),
         ],
       ),
@@ -444,6 +443,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Widget _buildParentForm() {
+    final l10n = AppLocalizations.of(context);
+    
     return Form(
       key: _parentFormKey,
       child: Column(
@@ -451,19 +452,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         children: [
           TextFormField(
             controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
+            decoration: InputDecoration(
+              labelText: l10n.get('email'),
               hintText: 'example@mail.com',
-              prefixIcon: Icon(Icons.email),
+              prefixIcon: const Icon(Icons.email),
             ),
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Введите email';
+                return l10n.get('enterNickname').replaceAll('nickname', 'email');
               }
               if (!value.contains('@')) {
-                return 'Неверный формат email';
+                return l10n.get('invalidEmailFormat');
               }
               return null;
             },
@@ -475,7 +476,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             controller: _parentPasswordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              labelText: 'Пароль',
+              labelText: l10n.get('password'),
               prefixIcon: const Icon(Icons.lock),
               suffixIcon: IconButton(
                 icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
@@ -484,7 +485,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Введите пароль';
+                return l10n.get('enterPassword');
               }
               return null;
             },
@@ -500,19 +501,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : Text(AppLocalizations.of(context).login),
+                : Text(l10n.login),
           ),
           
           const SizedBox(height: 8),
           
           TextButton(
             onPressed: () => context.go('/forgot-password'),
-            child: const Text('Забыли пароль?'),
+            child: Text(l10n.get('forgotPassword')),
           ),
           
           TextButton(
             onPressed: () => context.go('/register'),
-            child: Text(AppLocalizations.of(context).get('noAccount')),
+            child: Text(l10n.get('noAccount')),
           ),
         ],
       ),
@@ -529,14 +530,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         children: [
           Semantics(
             textField: true,
-            label: 'Email психолога',
-            hint: 'Введите ваш email для входа',
+            label: l10n.get('email'),
             child: TextFormField(
               controller: _psychologistEmailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: l10n.get('email'),
                 hintText: 'example@mail.com',
                 prefixIcon: const Icon(Icons.email),
                 border: OutlineInputBorder(
@@ -546,10 +546,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введите email';
+                  return l10n.get('enterPassword').replaceAll('password', 'email');
                 }
                 if (!value.contains('@')) {
-                  return 'Неверный формат email';
+                  return l10n.get('invalidEmailFormat');
                 }
                 return null;
               },
@@ -560,20 +560,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           
           Semantics(
             textField: true,
-            label: 'Пароль психолога',
-            hint: 'Введите ваш пароль',
+            label: l10n.get('password'),
             child: TextFormField(
               controller: _psychologistPasswordController,
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _loginPsychologist(),
               decoration: InputDecoration(
-                labelText: 'Пароль',
-                hintText: 'Ваш пароль',
+                labelText: l10n.get('password'),
+                hintText: l10n.get('yourPassword'),
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: Semantics(
                   button: true,
-                  label: _obscurePassword ? 'Показать пароль' : 'Скрыть пароль',
+                  label: _obscurePassword ? l10n.get('showPassword') : l10n.get('hidePassword'),
                   child: IconButton(
                     icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                     onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -586,7 +585,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введите пароль';
+                  return l10n.get('enterPassword');
                 }
                 return null;
               },
@@ -597,8 +596,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           
           Semantics(
             button: true,
-            label: 'Войти как психолог',
-            hint: 'Войти в аккаунт психолога',
+            label: l10n.get('login'),
             enabled: !_isLoading,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _loginPsychologist,
@@ -615,7 +613,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      AppLocalizations.of(context).login,
+                      l10n.login,
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
             ),
@@ -625,12 +623,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           
           TextButton(
             onPressed: () => context.go('/forgot-password'),
-            child: const Text('Забыли пароль?'),
+            child: Text(l10n.get('forgotPassword')),
           ),
           
           TextButton(
             onPressed: () => context.go('/register-psychologist'),
-            child: const Text('Нет аккаунта? Зарегистрироваться'),
+            child: Text(l10n.get('noAccount')),
           ),
         ],
       ),

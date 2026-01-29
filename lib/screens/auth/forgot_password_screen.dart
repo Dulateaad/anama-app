@@ -66,7 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/login'),
         ),
-        title: const Text('Сброс пароля'),
+        title: Text(l10n.get('resetPassword')),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -78,6 +78,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _buildSuccessView() {
+    final l10n = AppLocalizations.of(context);
+    
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -102,7 +104,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         Semantics(
           header: true,
           child: AccessibleText(
-            'Письмо отправлено!',
+            l10n.get('emailSent'),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -113,7 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         const SizedBox(height: 16),
         
         AccessibleText(
-          'Мы отправили инструкции по сбросу пароля на\n${_emailController.text}',
+          '${l10n.get('emailSentDesc')}\n${_emailController.text}',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Colors.grey[600],
           ),
@@ -135,7 +137,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: AccessibleText(
-                  'Проверьте папку "Спам", если письмо не пришло в течение нескольких минут',
+                  l10n.get('checkSpam'),
                   style: TextStyle(
                     color: Colors.blue[800],
                     fontSize: 14,
@@ -155,9 +157,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: const Text(
-              'Вернуться ко входу',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            child: Text(
+              l10n.get('backToLogin'),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -170,13 +172,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               _emailSent = false;
             });
           },
-          child: const Text('Отправить ещё раз'),
+          child: Text(l10n.get('sendAgain')),
         ),
       ],
     );
   }
 
   Widget _buildFormView() {
+    final l10n = AppLocalizations.of(context);
+    
     return Form(
       key: _formKey,
       child: Column(
@@ -204,7 +208,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           Semantics(
             header: true,
             child: AccessibleText(
-              'Забыли пароль?',
+              l10n.get('resetPasswordTitle'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -215,7 +219,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           const SizedBox(height: 12),
           
           AccessibleText(
-            'Введите email, который вы использовали при регистрации, и мы отправим вам ссылку для сброса пароля',
+            l10n.get('resetPasswordDesc'),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
@@ -228,7 +232,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           if (_errorMessage != null)
             Semantics(
               liveRegion: true,
-              label: 'Ошибка: $_errorMessage',
+              label: '${l10n.get('error')}: $_errorMessage',
               child: Container(
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.only(bottom: 16),
@@ -259,15 +263,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           // Поле email
           Semantics(
             textField: true,
-            label: 'Email для сброса пароля',
-            hint: 'Введите ваш email',
+            label: l10n.get('email'),
             child: TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _resetPassword(),
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: l10n.get('email'),
                 hintText: 'example@mail.com',
                 prefixIcon: const Icon(Icons.email_outlined),
                 border: OutlineInputBorder(
@@ -276,10 +279,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Введите email';
+                  return l10n.get('enterPassword').replaceAll('password', 'email');
                 }
                 if (!value.contains('@')) {
-                  return 'Неверный формат email';
+                  return l10n.get('invalidEmailFormat');
                 }
                 return null;
               },
@@ -291,7 +294,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           // Кнопка отправки
           Semantics(
             button: true,
-            label: 'Отправить ссылку для сброса пароля',
+            label: l10n.get('sendResetLink'),
             enabled: !_isLoading,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _resetPassword,
@@ -308,9 +311,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      'Сбросить пароль',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  : Text(
+                      l10n.get('sendResetLink'),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
             ),
           ),
@@ -321,11 +324,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           TextButton.icon(
             onPressed: () => context.go('/login'),
             icon: const Icon(Icons.arrow_back, size: 18),
-            label: const Text('Вернуться ко входу'),
+            label: Text(l10n.get('backToLogin')),
           ),
         ],
       ),
     );
   }
 }
-
