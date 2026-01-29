@@ -124,10 +124,12 @@ class LanguageScreen extends StatelessWidget {
   
   String _getLanguageSubtitle(AppLanguage language) {
     switch (language) {
-      case AppLanguage.kk:
-        return 'Қазақша';
+      case AppLanguage.en:
+        return 'English';
       case AppLanguage.ru:
         return 'Русский';
+      case AppLanguage.kk:
+        return 'Қазақша';
     }
   }
 }
