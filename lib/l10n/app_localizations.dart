@@ -364,7 +364,7 @@ class AppLocalizations {
       'brainDevelopmentFeature': 'Ми дамуы',
       'gamesAndActivitiesFeature': 'Ойындар және белсенділік',
       'trafficLightFeature': 'Бағдаршам',
-      'stateAnalyticsFeature': 'Жан талдауы',
+      'stateAnalyticsFeature': 'Жан күйі',
       'psychologistFeature': 'Психолог',
       'canChangeLayerInSettings': 'Мұны кейін параметрлерде өзгертуге болады',
       
@@ -709,7 +709,7 @@ class AppLocalizations {
       'brainDevelopmentFeature': 'Развитие мозга',
       'gamesAndActivitiesFeature': 'Игры и активности',
       'trafficLightFeature': 'Светофор',
-      'stateAnalyticsFeature': 'Аналитика души',
+      'stateAnalyticsFeature': 'Состояние души',
       'psychologistFeature': 'Психолог',
       'canChangeLayerInSettings': 'Вы можете изменить это позже в настройках',
       
@@ -1054,7 +1054,7 @@ class AppLocalizations {
       'brainDevelopmentFeature': 'Brain Development',
       'gamesAndActivitiesFeature': 'Games & Activities',
       'trafficLightFeature': 'Traffic Light',
-      'stateAnalyticsFeature': 'Soul Analytics',
+      'stateAnalyticsFeature': 'Soul State',
       'psychologistFeature': 'Psychologist',
       'canChangeLayerInSettings': 'You can change this later in settings',
       
