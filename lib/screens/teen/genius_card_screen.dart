@@ -188,7 +188,7 @@ class _GeniusCardScreenState extends State<GeniusCardScreen>
 
                       // Имя и достижение
                       Text(
-                        _card.name,
+                        _card.getName(context),
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class _GeniusCardScreenState extends State<GeniusCardScreen>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _card.achievement,
+                        _card.getAchievement(context),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -215,7 +215,7 @@ class _GeniusCardScreenState extends State<GeniusCardScreen>
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
-                          _card.story,
+                          _card.getStory(context),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[700],
@@ -230,7 +230,7 @@ class _GeniusCardScreenState extends State<GeniusCardScreen>
 
                       // Главное сообщение
                       Text(
-                        _card.message,
+                        _card.getMessage(context),
                         style: const TextStyle(
                           fontSize: 15,
                           height: 1.5,
@@ -352,7 +352,7 @@ class _GeniusCardScreenState extends State<GeniusCardScreen>
               _card.imageUrl,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) {
-                print('❌ Fallback тоже не сработал для: ${_card.name}');
+                print('❌ Fallback тоже не сработал для: ${_card.nameRu}');
                 return Container(
                   color: _getLightColor(),
                   child: Center(

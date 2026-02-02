@@ -554,97 +554,203 @@ exports.sendTrafficLightNotification = functions.https.onCall(async (data, conte
 // БАЗА ДАННЫХ ДЛЯ КАРТОЧЕК SERVE AND RETURN (0-5 лет)
 // ============================================
 
-// Инициализация карточек Serve and Return для детей 0-5 лет
+// Инициализация карточек Serve and Return для детей 0-5 лет (3 языка)
 exports.initServeAndReturnCards = functions.https.onRequest(async (req, res) => {
   cors(req, res, async () => {
     try {
       const cardsRef = admin.firestore().collection('serve_and_return_cards');
       
-      // Примеры карточек для разных возрастов (0-5 лет)
+      // Карточки для разных возрастов (0-5 лет) на 3 языках
       const cards = [
-        // 0-12 месяцев
+        // 0-12 месяцев — Зеркало улыбок
         {
           ageRange: { min: 0, max: 12 },
-          title: 'Зеркало улыбок',
-          description: 'Когда ребенок улыбается, улыбнитесь в ответ и назовите его эмоцию',
+          titleRu: 'Зеркало улыбок',
+          titleKk: 'Күлкі айнасы',
+          titleEn: 'Mirror of Smiles',
+          descriptionRu: 'Когда ребенок улыбается, улыбнитесь в ответ и назовите его эмоцию',
+          descriptionKk: 'Бала күлгенде, жауап ретінде күліп, оның эмоциясын атаңыз',
+          descriptionEn: 'When your baby smiles, smile back and name their emotion',
           brainZone: '#КраснаяЗона_Социум',
-          steps: [
+          stepsRu: [
             'Сядьте лицом к лицу с малышом на расстоянии 30 см',
             'Улыбнитесь и подождите — малыш улыбнется в ответ',
             'Повторите его мимику, добавьте звук "агу"',
             'Назовите эмоцию: "Ты улыбаешься! Мне тоже радостно!"',
           ],
-          serveAndReturn: 'Когда ребенок указывает на предмет, мама должна его назвать и описать',
-          careReminders: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
-          momSupport: 'Вы большая молодец!',
-          language: 'ru',
+          stepsKk: [
+            'Балаңызбен бетпе-бет 30 см қашықтықта отырыңыз',
+            'Күліп, күтіңіз — бала жауап ретінде күледі',
+            'Оның мимикасын қайталаңыз, "әгу" дыбысын қосыңыз',
+            'Эмоцияны атаңыз: "Сен күліп тұрсың! Маған да қуаныш!"',
+          ],
+          stepsEn: [
+            'Sit face to face with your baby at 30 cm distance',
+            'Smile and wait — baby will smile back',
+            'Mirror their expressions, add "coo" sounds',
+            'Name the emotion: "You\'re smiling! I\'m happy too!"',
+          ],
+          serveAndReturnRu: 'Когда ребенок указывает на предмет, мама должна его назвать и описать',
+          serveAndReturnKk: 'Бала затты көрсеткенде, ана оны атап, сипаттауы керек',
+          serveAndReturnEn: 'When baby points at something, mom should name and describe it',
+          careRemindersRu: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
+          careRemindersKk: 'Ылғалдылықты (норма 40-60%) және температураны (18-22°C) тексеріңіз. Таза ауада серуендеу маңызды!',
+          careRemindersEn: 'Check humidity (40-60%) and temperature (18-22°C). Fresh air walks are important!',
+          momSupportRu: 'Вы большая молодец!',
+          momSupportKk: 'Сіз үлкен молодецсіз!',
+          momSupportEn: 'You\'re doing great!',
         },
+        // 0-12 месяцев — Назови предмет
         {
           ageRange: { min: 0, max: 12 },
-          title: 'Назови предмет',
-          description: 'Когда ребенок указывает на предмет, назовите его и опишите',
+          titleRu: 'Назови предмет',
+          titleKk: 'Затты ата',
+          titleEn: 'Name the Object',
+          descriptionRu: 'Когда ребенок указывает на предмет, назовите его и опишите',
+          descriptionKk: 'Бала затты көрсеткенде, оны атап, сипаттаңыз',
+          descriptionEn: 'When baby points at something, name and describe it',
           brainZone: '#ЗеленаяЗона_Речь',
-          steps: [
+          stepsRu: [
             'Ребенок указывает на предмет (игрушку, картинку)',
             'Назовите предмет: "Это мячик!"',
             'Опишите его: "Он красный и круглый"',
             'Повторите несколько раз, используя разные слова',
           ],
-          serveAndReturn: 'Когда ребенок указывает на предмет, мама должна его назвать и описать — это база для развития речи',
-          careReminders: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
-          momSupport: 'Спасибо, что уделяете такое внимание развитию малыша',
-          language: 'ru',
+          stepsKk: [
+            'Бала затты (ойыншық, сурет) көрсетеді',
+            'Затты атаңыз: "Бұл доп!"',
+            'Сипаттаңыз: "Ол қызыл және дөңгелек"',
+            'Әртүрлі сөздерді қолданып, бірнеше рет қайталаңыз',
+          ],
+          stepsEn: [
+            'Baby points at an object (toy, picture)',
+            'Name the object: "This is a ball!"',
+            'Describe it: "It\'s red and round"',
+            'Repeat several times using different words',
+          ],
+          serveAndReturnRu: 'Когда ребенок указывает на предмет, мама должна его назвать и описать — это база для развития речи',
+          serveAndReturnKk: 'Бала затты көрсеткенде, ана оны атап, сипаттауы керек — бұл сөйлеу дамуының негізі',
+          serveAndReturnEn: 'When baby points at something, mom should name and describe it — this is the foundation for speech development',
+          careRemindersRu: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
+          careRemindersKk: 'Ылғалдылықты (норма 40-60%) және температураны (18-22°C) тексеріңіз. Таза ауада серуендеу маңызды!',
+          careRemindersEn: 'Check humidity (40-60%) and temperature (18-22°C). Fresh air walks are important!',
+          momSupportRu: 'Спасибо, что уделяете такое внимание развитию малыша',
+          momSupportKk: 'Баланың дамуына осындай көңіл бөлгеніңізге рахмет',
+          momSupportEn: 'Thank you for paying such attention to your baby\'s development',
         },
-        // 12-24 месяца
+        // 12-24 месяца — Башня вместе
         {
           ageRange: { min: 12, max: 24 },
-          title: 'Башня вместе',
-          description: 'Стройте башню из кубиков по очереди, комментируя действия',
+          titleRu: 'Башня вместе',
+          titleKk: 'Бірге мұнара',
+          titleEn: 'Tower Together',
+          descriptionRu: 'Стройте башню из кубиков по очереди, комментируя действия',
+          descriptionKk: 'Кубиктерден мұнараны кезекпен салып, әрекеттерді түсіндіріңіз',
+          descriptionEn: 'Build a tower from blocks taking turns, commenting on actions',
           brainZone: '#ОранжеваяЗона_Моторика',
-          steps: [
+          stepsRu: [
             'Возьмите кубики или стаканчики',
             'Положите первый кубик и скажите "Твоя очередь!"',
             'Похвалите попытку, даже если башня упала',
             'Стройте по очереди, комментируя: "Мой кубик, твой кубик"',
           ],
-          serveAndReturn: 'Когда ребенок кладет кубик, мама отвечает похвалой и добавляет свой кубик',
-          careReminders: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
-          momSupport: 'Не забудьте позаботиться о себе',
-          language: 'ru',
+          stepsKk: [
+            'Кубиктер немесе стақандар алыңыз',
+            'Бірінші кубикті қойып, "Сенің кезегің!" деңіз',
+            'Мұнара құласа да, тырысқанын мақтаңыз',
+            'Кезекпен салыңыз: "Менің кубигім, сенің кубигің"',
+          ],
+          stepsEn: [
+            'Take blocks or cups',
+            'Place the first block and say "Your turn!"',
+            'Praise the attempt even if the tower falls',
+            'Build taking turns: "My block, your block"',
+          ],
+          serveAndReturnRu: 'Когда ребенок кладет кубик, мама отвечает похвалой и добавляет свой кубик',
+          serveAndReturnKk: 'Бала кубик қойғанда, ана мақтау айтып, өз кубигін қосады',
+          serveAndReturnEn: 'When child places a block, mom responds with praise and adds her block',
+          careRemindersRu: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
+          careRemindersKk: 'Ылғалдылықты (норма 40-60%) және температураны (18-22°C) тексеріңіз. Таза ауада серуендеу маңызды!',
+          careRemindersEn: 'Check humidity (40-60%) and temperature (18-22°C). Fresh air walks are important!',
+          momSupportRu: 'Не забудьте позаботиться о себе',
+          momSupportKk: 'Өзіңізге қамқорлық жасауды ұмытпаңыз',
+          momSupportEn: 'Don\'t forget to take care of yourself',
         },
-        // 24-36 месяцев
+        // 24-36 месяцев — Что это?
         {
           ageRange: { min: 24, max: 36 },
-          title: 'Что это?',
-          description: 'Показывайте предметы и спрашивайте "Что это?", помогая ребенку назвать',
+          titleRu: 'Что это?',
+          titleKk: 'Бұл не?',
+          titleEn: 'What is this?',
+          descriptionRu: 'Показывайте предметы и спрашивайте "Что это?", помогая ребенку назвать',
+          descriptionKk: 'Заттарды көрсетіп, "Бұл не?" деп сұраңыз, балаға атауға көмектесіңіз',
+          descriptionEn: 'Show objects and ask "What is this?", helping the child name them',
           brainZone: '#ЗеленаяЗона_Речь',
-          steps: [
+          stepsRu: [
             'Покажите предмет и спросите: "Что это?"',
             'Если ребенок не знает, назовите сами: "Это машина!"',
             'Повторите вопрос через минуту',
             'Хвалите любую попытку ответить',
           ],
-          serveAndReturn: 'Когда ребенок пытается назвать предмет, мама подтверждает и расширяет ответ',
-          careReminders: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
-          momSupport: 'Вы делаете важную работу',
-          language: 'ru',
+          stepsKk: [
+            'Затты көрсетіп, "Бұл не?" деп сұраңыз',
+            'Егер бала білмесе, өзіңіз атаңыз: "Бұл машина!"',
+            'Бір минуттан кейін сұрақты қайталаңыз',
+            'Кез келген жауап беру әрекетін мақтаңыз',
+          ],
+          stepsEn: [
+            'Show an object and ask: "What is this?"',
+            'If the child doesn\'t know, name it yourself: "This is a car!"',
+            'Repeat the question after a minute',
+            'Praise any attempt to answer',
+          ],
+          serveAndReturnRu: 'Когда ребенок пытается назвать предмет, мама подтверждает и расширяет ответ',
+          serveAndReturnKk: 'Бала затты атауға тырысқанда, ана растайды және жауапты кеңейтеді',
+          serveAndReturnEn: 'When child tries to name an object, mom confirms and expands the answer',
+          careRemindersRu: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
+          careRemindersKk: 'Ылғалдылықты (норма 40-60%) және температураны (18-22°C) тексеріңіз. Таза ауада серуендеу маңызды!',
+          careRemindersEn: 'Check humidity (40-60%) and temperature (18-22°C). Fresh air walks are important!',
+          momSupportRu: 'Вы делаете важную работу',
+          momSupportKk: 'Сіз маңызды жұмыс істеп жатырсыз',
+          momSupportEn: 'You\'re doing important work',
         },
-        // 36-60 месяцев
+        // 36-60 месяцев — Придумай историю
         {
           ageRange: { min: 36, max: 60 },
-          title: 'Придумай историю',
-          description: 'Начните историю и предложите ребенку продолжить',
+          titleRu: 'Придумай историю',
+          titleKk: 'Әңгіме ойлап тап',
+          titleEn: 'Make Up a Story',
+          descriptionRu: 'Начните историю и предложите ребенку продолжить',
+          descriptionKk: 'Әңгімені бастап, балаға жалғастыруды ұсыныңыз',
+          descriptionEn: 'Start a story and invite the child to continue',
           brainZone: '#ЖелтаяЗона_Творчество',
-          steps: [
+          stepsRu: [
             'Начните: "Жил-был маленький зайчик..."',
             'Спросите: "Что он делал?"',
             'Продолжите историю по очереди',
             'Закончите вместе счастливым концом',
           ],
-          serveAndReturn: 'Когда ребенок добавляет идею, мама развивает её и задает следующий вопрос',
-          careReminders: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
-          momSupport: 'Ваша забота — это основа здорового развития',
-          language: 'ru',
+          stepsKk: [
+            'Бастаңыз: "Баяғыда бір кішкентай қоян бар екен..."',
+            'Сұраңыз: "Ол не істеді?"',
+            'Әңгімені кезекпен жалғастырыңыз',
+            'Бірге бақытты соңмен аяқтаңыз',
+          ],
+          stepsEn: [
+            'Start: "Once upon a time, there was a little bunny..."',
+            'Ask: "What did it do?"',
+            'Continue the story taking turns',
+            'End together with a happy ending',
+          ],
+          serveAndReturnRu: 'Когда ребенок добавляет идею, мама развивает её и задает следующий вопрос',
+          serveAndReturnKk: 'Бала идея қосқанда, ана оны дамытады және келесі сұрақ қояды',
+          serveAndReturnEn: 'When child adds an idea, mom develops it and asks the next question',
+          careRemindersRu: 'Проверьте влажность (норма 40-60%) и температуру (18-22°C). Важны прогулки на свежем воздухе!',
+          careRemindersKk: 'Ылғалдылықты (норма 40-60%) және температураны (18-22°C) тексеріңіз. Таза ауада серуендеу маңызды!',
+          careRemindersEn: 'Check humidity (40-60%) and temperature (18-22°C). Fresh air walks are important!',
+          momSupportRu: 'Ваша забота — это основа здорового развития',
+          momSupportKk: 'Сіздің қамқорлығыңыз — сау дамудың негізі',
+          momSupportEn: 'Your care is the foundation of healthy development',
         },
       ];
       
