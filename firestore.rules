@@ -66,6 +66,18 @@ service cloud.firestore {
       allow read, write: if true;
     }
     
+    // Коллекция mail для отправки email через Cloud Functions
+    // Разрешаем создание без авторизации (для процесса регистрации)
+    match /mail/{mailId} {
+      allow create: if true;
+      allow read, update, delete: if false; // Только Cloud Functions
+    }
+    
+    // Email verification codes
+    match /email_verification_codes/{codeId} {
+      allow read, write: if true; // Нужно для процесса верификации
+    }
+    
     // Карточки Serve and Return для детей 0-5 лет
     match /serve_and_return_cards/{cardId} {
       allow read: if request.auth != null;
