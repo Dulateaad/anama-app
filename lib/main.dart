@@ -43,6 +43,8 @@ import 'screens/psychologists/psychologist_shell.dart';
 import 'screens/psychologists/psychologist_chats_screen.dart';
 import 'screens/psychologists/psychologist_profile_screen.dart';
 import 'screens/psychologists/psychologist_user_chat_screen.dart';
+import 'screens/parent/child_age_selection_screen.dart';
+import 'screens/parent/parent_baby_shell.dart';
 import 'models/phq9_question.dart';
 import 'models/psychologist_model.dart';
 import 'models/gad7_question.dart';
@@ -261,8 +263,16 @@ class AnamaApp extends StatelessWidget {
       
       // Родитель
       GoRoute(
+        path: '/parent-age-selection',
+        builder: (context, state) => const ChildAgeSelectionScreen(),
+      ),
+      GoRoute(
         path: '/parent',
         builder: (context, state) => const ParentShell(),
+      ),
+      GoRoute(
+        path: '/parent-baby',
+        builder: (context, state) => const ParentBabyShell(),
       ),
       GoRoute(
         path: '/parent/link',

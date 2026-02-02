@@ -15,6 +15,7 @@ class AnamaUser {
   final bool parentalConsentGiven; // Дано ли родительское согласие
   final DateTime? parentalConsentDate; // Дата согласия
   final Gender? gender; // Пол пользователя (для подростков - выбор темы)
+  final String? childAgeGroup; // 'baby' (0-5) или 'teenager' (13-18) — для родителей
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -32,6 +33,7 @@ class AnamaUser {
     this.parentalConsentGiven = false,
     this.parentalConsentDate,
     this.gender,
+    this.childAgeGroup,
     required this.createdAt,
     required this.updatedAt,
   }) : visitorId = visitorId ?? _generateVisitorId();
@@ -69,6 +71,7 @@ class AnamaUser {
               orElse: () => Gender.other,
             )
           : null,
+      childAgeGroup: map['childAgeGroup'],
       createdAt: map['createdAt']?.toDate() ?? DateTime.now(),
       updatedAt: map['updatedAt']?.toDate() ?? DateTime.now(),
     );
@@ -88,6 +91,7 @@ class AnamaUser {
       'parentalConsentGiven': parentalConsentGiven,
       'parentalConsentDate': parentalConsentDate,
       'gender': gender?.name,
+      'childAgeGroup': childAgeGroup,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -107,6 +111,7 @@ class AnamaUser {
     bool? parentalConsentGiven,
     DateTime? parentalConsentDate,
     Gender? gender,
+    String? childAgeGroup,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -124,6 +129,7 @@ class AnamaUser {
       parentalConsentGiven: parentalConsentGiven ?? this.parentalConsentGiven,
       parentalConsentDate: parentalConsentDate ?? this.parentalConsentDate,
       gender: gender ?? this.gender,
+      childAgeGroup: childAgeGroup ?? this.childAgeGroup,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

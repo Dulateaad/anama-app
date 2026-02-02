@@ -114,10 +114,25 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         // Проверяем роль пользователя
         if (user.role == UserRole.psychologist) {
           context.go('/psychologist'); // Интерфейс психолога
-        } else if (user.linkedUserId == null) {
-          context.go('/parent/link');
+          return;
+        }
+        
+        // Проверяем, выбрана ли возрастная группа ребёнка
+        final childAgeGroup = user.childAgeGroup;
+        
+        if (childAgeGroup == null) {
+          // Первый вход — показываем выбор возрастной группы
+          context.go('/parent-age-selection');
+        } else if (childAgeGroup == 'baby') {
+          // Родитель малыша (0-5 лет)
+          context.go('/parent-baby');
         } else {
-          context.go('/parent');
+          // Родитель подростка (13-18 лет)
+          if (user.linkedUserId == null) {
+            context.go('/parent/link');
+          } else {
+            context.go('/parent');
+          }
         }
       }
     } catch (e) {
