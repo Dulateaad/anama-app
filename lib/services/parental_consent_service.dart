@@ -7,132 +7,103 @@ import '../models/parental_consent.dart';
 class ParentalConsentService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Отправка OTP на телефон родителя
-  Future<bool> sendOtpToPhone(String phone) async {
-    try {
-      // Генерируем 6-значный код
-      final otp = _generateOtp();
-      
-      // Нормализуем номер телефона (убираем все кроме цифр)
-      final normalizedPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-      
-      // Сохраняем OTP во временную коллекцию (с TTL)
-      await _firestore
-          .collection('parental_consent_otps')
-          .doc(normalizedPhone)
-          .set({
-        'otp': otp,
-        'phone': normalizedPhone,
-        'createdAt': FieldValue.serverTimestamp(),
-        'expiresAt': Timestamp.fromDate(
-          DateTime.now().add(const Duration(minutes: 10)),
-        ),
-      });
-
-      // Отправляем SMS через Firebase Function
-      try {
-        final functionUrl = 'https://us-central1-anama-app.cloudfunctions.net/sendParentalConsentOtp';
-        
-        final response = await http.post(
-          Uri.parse(functionUrl),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'phone': normalizedPhone,
-            'otp': otp,
-            'language': 'ru', // Можно определить язык из настроек пользователя
-          }),
-        ).timeout(const Duration(seconds: 10));
-
-        if (response.statusCode == 200) {
-          print('✅ OTP SMS отправлен на $normalizedPhone');
-          return true;
-        } else {
-          print('❌ Ошибка отправки SMS: ${response.statusCode}');
-          print('Response: ${response.body}');
-          // Не возвращаем false, так как OTP сохранен в Firestore
-          return true; // OTP сохранен, SMS может быть отправлен позже
-        }
-      } catch (e) {
-        print('⚠️ Ошибка отправки SMS через Firebase Function: $e');
-        // OTP сохранен в Firestore, можно попробовать отправить позже
-        return true;
-      }
-    } catch (e) {
-      print('❌ Ошибка отправки OTP: $e');
-      return false;
-    }
-  }
-
-  /// Отправка OTP на email родителя (deprecated - используйте sendOtpToPhone)
-  @Deprecated('Используйте sendOtpToPhone')
+  /// Отправка OTP на email родителя
   Future<bool> sendOtpToEmail(String email) async {
     try {
       // Генерируем 6-значный код
       final otp = _generateOtp();
+      final normalizedEmail = email.toLowerCase().trim();
       
       // Сохраняем OTP во временную коллекцию (с TTL)
       await _firestore
           .collection('parental_consent_otps')
-          .doc(email)
+          .doc(normalizedEmail)
           .set({
         'otp': otp,
-        'email': email,
+        'email': normalizedEmail,
         'createdAt': FieldValue.serverTimestamp(),
         'expiresAt': Timestamp.fromDate(
           DateTime.now().add(const Duration(minutes: 10)),
         ),
       });
 
-      // Отправляем email через Firebase Function
-      try {
-        final functionUrl = 'https://us-central1-anama-app.cloudfunctions.net/sendParentalConsentOtp';
+      // Отправляем email через коллекцию mail (триггер Cloud Function)
+      await _firestore.collection('mail').add({
+        'to': normalizedEmail,
+        'message': {
+          'subject': 'Anama: Код подтверждения родителя',
+          'html': '''
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, sans-serif; background-color: #FDF8F9;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <tr>
+      <td style="background: linear-gradient(135deg, #F3C6CF 0%, #E8A5B3 100%); border-radius: 16px 16px 0 0; padding: 40px 20px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 32px; font-weight: bold;">🕊️ Anama</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Эмоциональная безопасность</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: white; padding: 40px 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="color: #5D2A3B; margin: 0 0 20px 0; font-size: 24px;">Подтверждение родительского согласия</h2>
         
-        final response = await http.post(
-          Uri.parse(functionUrl),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'email': email,
-            'otp': otp,
-            'language': 'ru', // Можно определить язык из настроек пользователя
-          }),
-        ).timeout(const Duration(seconds: 10));
+        <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Ваш ребенок регистрируется в приложении Anama. Для подтверждения родительского согласия введите код ниже:
+        </p>
+        
+        <div style="background: linear-gradient(135deg, #F3C6CF 0%, #E8A5B3 100%); border-radius: 12px; padding: 30px; text-align: center; margin: 30px 0;">
+          <p style="color: white; font-size: 14px; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px;">Ваш код подтверждения</p>
+          <p style="color: white; font-size: 42px; font-weight: bold; margin: 0; letter-spacing: 8px; font-family: monospace;">$otp</p>
+        </div>
+        
+        <div style="background-color: #FFF5F7; border-left: 4px solid #E8A5B3; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+          <p style="color: #5D2A3B; font-size: 14px; margin: 0;">
+            <strong>⚠️ Важно:</strong> Код действителен 10 минут. Никому не сообщайте этот код.
+          </p>
+        </div>
+        
+        <p style="color: #999; font-size: 14px; line-height: 1.6;">
+          Если вы не запрашивали этот код, просто проигнорируйте это письмо.
+        </p>
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+        
+        <p style="color: #999; font-size: 12px; text-align: center; margin: 0;">
+          © ${DateTime.now().year} Anama. Эмоциональная безопасность вашего ребенка.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+          ''',
+        },
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-        if (response.statusCode == 200) {
-          print('✅ OTP email отправлен на $email');
-          return true;
-        } else {
-          print('❌ Ошибка отправки email: ${response.statusCode}');
-          print('Response: ${response.body}');
-          // Не возвращаем false, так как OTP сохранен в Firestore
-          return true; // OTP сохранен, email может быть отправлен позже
-        }
-      } catch (e) {
-        print('⚠️ Ошибка отправки email через Firebase Function: $e');
-        // OTP сохранен в Firestore, можно попробовать отправить позже
-        return true;
-      }
+      print('✅ OTP email отправлен на $normalizedEmail');
+      return true;
     } catch (e) {
       print('❌ Ошибка отправки OTP: $e');
       return false;
     }
   }
 
-  /// Проверка OTP (работает с телефоном или email для обратной совместимости)
-  Future<bool> verifyOtp(String phoneOrEmail, String otp) async {
+  /// Проверка OTP
+  Future<bool> verifyOtp(String email, String otp) async {
     try {
-      // Нормализуем номер телефона (убираем все кроме цифр)
-      final normalized = phoneOrEmail.replaceAll(RegExp(r'[^\d]'), '');
+      final normalizedEmail = email.toLowerCase().trim();
       
       final doc = await _firestore
           .collection('parental_consent_otps')
-          .doc(normalized)
+          .doc(normalizedEmail)
           .get();
 
       if (!doc.exists) {
+        print('❌ OTP документ не найден для $normalizedEmail');
         return false;
       }
 
@@ -143,6 +114,7 @@ class ParentalConsentService {
       // Проверяем срок действия
       if (DateTime.now().isAfter(expiresAt)) {
         await doc.reference.delete();
+        print('❌ OTP истёк');
         return false;
       }
 
@@ -150,9 +122,11 @@ class ParentalConsentService {
       if (storedOtp == otp) {
         // Удаляем использованный OTP
         await doc.reference.delete();
+        print('✅ OTP подтверждён для $normalizedEmail');
         return true;
       }
 
+      print('❌ Неверный OTP');
       return false;
     } catch (e) {
       print('❌ Ошибка проверки OTP: $e');
@@ -163,8 +137,7 @@ class ParentalConsentService {
   /// Создание родительского согласия
   Future<ParentalConsent?> createParentalConsent({
     required String childId,
-    String? parentEmail, // Опционально, так как теперь используем только телефон
-    required String parentPhone,
+    required String parentEmail,
     required String consentMethod,
     required int childAge,
     required bool ageConfirmed,
@@ -178,7 +151,7 @@ class ParentalConsentService {
       // Пытаемся найти родителя по email
       final parentQuery = await _firestore
           .collection('users')
-          .where('email', isEqualTo: parentEmail)
+          .where('email', isEqualTo: parentEmail.toLowerCase())
           .where('role', isEqualTo: 'parent')
           .limit(1)
           .get();
@@ -199,8 +172,8 @@ class ParentalConsentService {
         childAge: childAge,
         ageConfirmed: ageConfirmed,
         responsibilityAccepted: responsibilityAccepted,
-        parentEmail: parentEmail ?? '', // Может быть пустым, так как используем телефон
-        parentPhone: parentPhone,
+        parentEmail: parentEmail.toLowerCase(),
+        parentPhone: '', // Телефон больше не используется
         ipAddress: metadata?['ip'],
         deviceInfo: metadata?['userAgent'],
         isActive: true,
@@ -215,6 +188,7 @@ class ParentalConsentService {
       await _firestore.collection('users').doc(childId).update({
         'parentalConsentGiven': true,
         'parentalConsentDate': FieldValue.serverTimestamp(),
+        'parentEmail': parentEmail.toLowerCase(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
 

@@ -1578,3 +1578,224 @@ ID пользователя: ${feedbackData.userId || 'Не авторизова
       return null;
     }
   });
+
+// ============================================
+// EMAIL ВЕРИФИКАЦИЯ ДЛЯ РОДИТЕЛЕЙ
+// ============================================
+
+/**
+ * Отправка кода верификации на EMAIL
+ * Используется для регистрации родителей
+ */
+exports.sendEmailVerificationCode = functions.https.onCall(async (data, context) => {
+  const { email, language = 'ru', role = 'parent' } = data;
+
+  if (!email) {
+    throw new functions.https.HttpsError('invalid-argument', 'Email is required');
+  }
+
+  // Валидация email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Invalid email format');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const db = admin.firestore();
+    
+    // Проверяем rate limiting (макс 3 кода в 10 минут)
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    const recentCodes = await db
+      .collection('email_verification_codes')
+      .where('email', '==', normalizedEmail)
+      .where('createdAt', '>', tenMinutesAgo)
+      .get();
+    
+    if (recentCodes.size >= 3) {
+      throw new functions.https.HttpsError(
+        'resource-exhausted', 
+        'Too many requests. Please wait 10 minutes.'
+      );
+    }
+
+    // Генерируем 6-значный код
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 минут
+
+    // Сохраняем код в Firestore
+    const codeDoc = await db.collection('email_verification_codes').add({
+      email: normalizedEmail,
+      code: code,
+      role: role,
+      language: language,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      expiresAt: expiresAt,
+      verified: false,
+      attempts: 0,
+    });
+
+    // Отправляем email
+    const transporter = createTransporter();
+    if (!transporter) {
+      throw new functions.https.HttpsError('internal', 'Email service not configured');
+    }
+
+    const { fromName, from } = getEmailConfig();
+    const template = getEmailTemplate(code, language);
+
+    await transporter.sendMail({
+      from: `"${fromName}" <${from}>`,
+      to: normalizedEmail,
+      subject: template.subject,
+      html: template.body,
+    });
+
+    console.log('✅ Код верификации отправлен на:', normalizedEmail);
+
+    return { 
+      success: true, 
+      message: 'Verification code sent to email',
+      codeId: codeDoc.id,
+    };
+
+  } catch (error) {
+    console.error('❌ Ошибка отправки кода:', error);
+    
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    
+    throw new functions.https.HttpsError('internal', error.message);
+  }
+});
+
+/**
+ * Проверка EMAIL кода верификации
+ */
+exports.verifyEmailCode = functions.https.onCall(async (data, context) => {
+  const { email, code } = data;
+
+  if (!email || !code) {
+    throw new functions.https.HttpsError('invalid-argument', 'Email and code are required');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const db = admin.firestore();
+    
+    // Ищем актуальный код
+    const codesSnapshot = await db
+      .collection('email_verification_codes')
+      .where('email', '==', normalizedEmail)
+      .where('verified', '==', false)
+      .where('expiresAt', '>', new Date())
+      .orderBy('expiresAt', 'desc')
+      .limit(1)
+      .get();
+
+    if (codesSnapshot.empty) {
+      throw new functions.https.HttpsError('not-found', 'No valid code found. Please request a new one.');
+    }
+
+    const codeDoc = codesSnapshot.docs[0];
+    const codeData = codeDoc.data();
+
+    // Проверяем количество попыток
+    if (codeData.attempts >= 5) {
+      throw new functions.https.HttpsError('permission-denied', 'Too many attempts. Please request a new code.');
+    }
+
+    // Проверяем код
+    if (codeData.code !== code) {
+      // Увеличиваем счётчик попыток
+      await codeDoc.ref.update({
+        attempts: admin.firestore.FieldValue.increment(1),
+        lastAttemptAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      
+      const remainingAttempts = 5 - (codeData.attempts + 1);
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `Invalid code. ${remainingAttempts} attempts remaining.`
+      );
+    }
+
+    // Код верный — помечаем как использованный
+    await codeDoc.ref.update({
+      verified: true,
+      verifiedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // Проверяем, есть ли пользователь с таким email
+    let userId = null;
+    let isNewUser = true;
+    
+    const usersSnapshot = await db
+      .collection('users')
+      .where('email', '==', normalizedEmail)
+      .limit(1)
+      .get();
+
+    if (!usersSnapshot.empty) {
+      userId = usersSnapshot.docs[0].id;
+      isNewUser = false;
+    }
+
+    console.log('✅ Код верифицирован для:', normalizedEmail);
+
+    return { 
+      success: true, 
+      verified: true,
+      email: normalizedEmail,
+      userId: userId,
+      isNewUser: isNewUser,
+      role: codeData.role,
+    };
+
+  } catch (error) {
+    console.error('❌ Ошибка верификации кода:', error);
+    
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    
+    throw new functions.https.HttpsError('internal', error.message);
+  }
+});
+
+/**
+ * Очистка устаревших кодов верификации (запускать по расписанию)
+ */
+exports.cleanupVerificationCodes = functions.pubsub
+  .schedule('0 3 * * *') // Каждый день в 03:00 UTC
+  .timeZone('Asia/Almaty')
+  .onRun(async (context) => {
+    console.log('🧹 Очистка устаревших кодов верификации');
+    
+    try {
+      const db = admin.firestore();
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      
+      // Удаляем старые email коды
+      const oldEmailCodes = await db
+        .collection('email_verification_codes')
+        .where('createdAt', '<', oneDayAgo)
+        .get();
+      
+      const batch = db.batch();
+      oldEmailCodes.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      
+      await batch.commit();
+      console.log(`✅ Удалено ${oldEmailCodes.size} устаревших кодов`);
+      
+      return null;
+    } catch (error) {
+      console.error('❌ Ошибка очистки кодов:', error);
+      return null;
+    }
+  });

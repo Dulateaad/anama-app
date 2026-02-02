@@ -104,7 +104,6 @@ class AuthService extends ChangeNotifier {
     required String password,
     int? age,
     String? parentEmail,
-    String? parentPhone,
     Gender? gender,
   }) async {
     try {
@@ -140,15 +139,12 @@ class AuthService extends ChangeNotifier {
       userData['nickname'] = nickname.toLowerCase();
       userData['fakeEmail'] = fakeEmail;
       
-      // Сохраняем возраст и контакты родителя (если есть)
+      // Сохраняем возраст и email родителя (если есть)
       if (age != null) {
         userData['age'] = age;
       }
       if (parentEmail != null) {
-        userData['parentEmail'] = parentEmail;
-      }
-      if (parentPhone != null) {
-        userData['parentPhone'] = parentPhone;
+        userData['parentEmail'] = parentEmail.toLowerCase();
       }
 
       await _firestore

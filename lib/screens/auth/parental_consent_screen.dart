@@ -22,7 +22,7 @@ class ParentalConsentScreen extends StatefulWidget {
 
 class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _parentPhoneController = TextEditingController();
+  final _parentEmailController = TextEditingController();
   final _otpController = TextEditingController();
   
   bool _isLoading = false;
@@ -36,7 +36,7 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
 
   @override
   void dispose() {
-    _parentPhoneController.dispose();
+    _parentEmailController.dispose();
     _otpController.dispose();
     super.dispose();
   }
@@ -99,25 +99,23 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Поле для ввода телефона родителя
+                // Поле для ввода email родителя
                 TextFormField(
-                  controller: _parentPhoneController,
+                  controller: _parentEmailController,
                   decoration: const InputDecoration(
-                    labelText: 'Телефон родителя',
-                    hintText: '+7 (XXX) XXX-XX-XX',
-                    prefixIcon: Icon(Icons.phone),
-                    helperText: 'На этот номер будет отправлен код подтверждения',
+                    labelText: 'Email родителя',
+                    hintText: 'parent@example.com',
+                    prefixIcon: Icon(Icons.email),
+                    helperText: 'На этот адрес будет отправлен код подтверждения',
                   ),
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
+                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Введите телефон родителя';
+                      return 'Введите email родителя';
                     }
-                    if (value.length < 10) {
-                      return 'Введите корректный номер телефона';
+                    final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                    if (!emailRegex.hasMatch(value)) {
+                      return 'Введите корректный email';
                     }
                     return null;
                   },
@@ -350,8 +348,8 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
     });
 
     try {
-      final phone = _parentPhoneController.text.trim();
-      final success = await _consentService.sendOtpToPhone(phone);
+      final email = _parentEmailController.text.trim();
+      final success = await _consentService.sendOtpToEmail(email);
 
       if (success) {
         setState(() {
@@ -359,11 +357,14 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
           _isLoading = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Код подтверждения отправлен на номер $phone'),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Код подтверждения отправлен на $email'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       } else {
         setState(() {
           _isLoading = false;
@@ -387,9 +388,9 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
     });
 
     try {
-      final phone = _parentPhoneController.text.trim();
+      final email = _parentEmailController.text.trim();
       final success = await _consentService.verifyOtp(
-        phone,
+        email,
         _otpController.text.trim(),
       );
 
@@ -399,13 +400,15 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
           _isLoading = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Код подтвержден. Пожалуйста, подтвердите возраст ребенка и примите ответственность.'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 4),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Код подтвержден. Пожалуйста, подтвердите возраст ребенка и примите ответственность.'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 4),
+            ),
+          );
+        }
       } else {
         setState(() {
           _isLoading = false;
@@ -461,24 +464,22 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
     try {
       final authService = context.read<AuthService>();
       
-      final parentPhone = _parentPhoneController.text.trim();
+      final parentEmail = _parentEmailController.text.trim();
       
       // Сначала регистрируем подростка
       await authService.signUpTeen(
         nickname: registrationData.nickname,
         password: registrationData.password,
         age: registrationData.age,
-        parentEmail: null, // Email больше не используется
-        parentPhone: parentPhone,
+        parentEmail: parentEmail,
         gender: registrationData.gender,
       );
 
       // Затем создаём запись о родительском согласии
       final consent = await _consentService.createParentalConsent(
         childId: authService.currentUser?.uid ?? '',
-        parentEmail: null, // Email больше не используется
-        parentPhone: parentPhone,
-        consentMethod: 'phone_otp', // Используем телефон для OTP
+        parentEmail: parentEmail,
+        consentMethod: 'email_otp',
         childAge: registrationData.age!,
         ageConfirmed: _ageConfirmed,
         responsibilityAccepted: _responsibilityAccepted,
