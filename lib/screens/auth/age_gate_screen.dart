@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/registration_state_service.dart';
 import '../../models/teen_registration_data.dart';
 
 /// Экран проверки возраста (Age Gate)
@@ -249,9 +250,9 @@ class _AgeGateScreenState extends State<AgeGateScreen> {
 
     // Переходим к следующему шагу
     if (_isMinor()) {
-      // Переход к экрану родительского согласия с данными регистрации
-      final dataWithAge = widget.registrationData?.copyWithAge(_enteredAge!);
-      context.go('/parental-consent', extra: dataWithAge);
+      // Обновляем возраст в RegistrationStateService
+      context.read<RegistrationStateService>().updateAge(_enteredAge!);
+      context.go('/parental-consent');
     } else {
       // Пользователь совершеннолетний, продолжаем регистрацию
       _continueRegistration();

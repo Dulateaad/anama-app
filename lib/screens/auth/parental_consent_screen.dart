@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../services/parental_consent_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/registration_state_service.dart';
 import '../../models/teen_registration_data.dart';
 
 /// Экран родительского согласия (Verifiable Parental Consent)
@@ -491,6 +492,11 @@ class _ParentalConsentScreenState extends State<ParentalConsentScreen> {
       );
 
       if (consent != null) {
+        // Очищаем данные регистрации
+        if (mounted) {
+          context.read<RegistrationStateService>().clear();
+        }
+        
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Регистрация завершена! Добро пожаловать в Anama!'),

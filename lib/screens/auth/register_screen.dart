@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/registration_state_service.dart';
 import '../../models/user_model.dart';
 import '../../models/teen_registration_data.dart';
 
@@ -67,15 +68,18 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     });
 
     try {
-      // Создаём данные регистрации и переходим к Age Gate
+      // Создаём данные регистрации и сохраняем в сервис
       final registrationData = TeenRegistrationData(
         nickname: _nicknameController.text.trim(),
         password: _teenPasswordController.text,
         gender: _selectedGender,
       );
       
+      // Сохраняем в RegistrationStateService (не теряется при навигации)
+      context.read<RegistrationStateService>().setTeenRegistrationData(registrationData);
+      
       if (mounted) {
-        context.go('/age-gate', extra: registrationData);
+        context.go('/age-gate');
       }
     } catch (e) {
       setState(() {

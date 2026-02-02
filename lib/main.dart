@@ -10,6 +10,7 @@ import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'services/notification_service.dart';
 import 'services/language_service.dart';
+import 'services/registration_state_service.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
@@ -82,6 +83,7 @@ class AnamaApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<LanguageService>(create: (_) => LanguageService()),
+        ChangeNotifierProvider<RegistrationStateService>(create: (_) => RegistrationStateService()),
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<NotificationService>(create: (_) => NotificationService()),
       ],
@@ -235,8 +237,9 @@ class AnamaApp extends StatelessWidget {
       GoRoute(
         path: '/age-gate',
         builder: (context, state) {
-          final registrationData = state.extra as TeenRegistrationData?;
-          return AgeGateScreen(registrationData: registrationData);
+          // Получаем данные из RegistrationStateService (не теряются при навигации)
+          final registrationService = context.read<RegistrationStateService>();
+          return AgeGateScreen(registrationData: registrationService.teenRegistrationData);
         },
       ),
       
@@ -244,8 +247,9 @@ class AnamaApp extends StatelessWidget {
       GoRoute(
         path: '/parental-consent',
         builder: (context, state) {
-          final registrationData = state.extra as TeenRegistrationData?;
-          return ParentalConsentScreen(registrationData: registrationData);
+          // Получаем данные из RegistrationStateService
+          final registrationService = context.read<RegistrationStateService>();
+          return ParentalConsentScreen(registrationData: registrationService.teenRegistrationData);
         },
       ),
       
